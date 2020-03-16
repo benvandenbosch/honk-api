@@ -21,6 +21,9 @@ Developers on Honk API will use Python's `venv` package to manage dependencies w
 
 Developers on Honk's API will use Python's `venv` package to manage dependencies within the application on their local machine. Developers must be running Python 3.4 or newer to use this tool. In our root project directory, this directory will be called `honkenv`, though it will be included in the gitignore to prevent matriculation to production.
 
+To create the environment, run this command in the root directory: `python3 -m venv honkenv`.
+
+**Activating the Environment**
 
 Activating the virtual environment will cause the application to run with the dependencies specified by the virtual environment.
 
