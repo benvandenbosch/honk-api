@@ -5,8 +5,37 @@ Please use make use of Python's virtual environment tools in dependency/package 
 
 1. Clone the repository and set your current directory to the project root.
 2. Activate and provision your virtual environment ([see here](#venv))
-3. Run the flask application on the development server with `flask run`. It will be available on the local IP address `127.0.0.1`.
+3. Initalize the database on your development machine. ([see here](#database))
+4. Run the flask application on the development server with `flask run`. It will be available on the local IP address `127.0.0.1`.
 
+
+### Dev Database Initialization & Migration
+<a name=database></a>
+The Honk API implements a local SQLite database to reap the efficiencies of local data
+storage for development and for its convenience in our database server/client model.
+
+We use [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/), a wrapper
+for the [SQLAlchemy](https://www.sqlalchemy.org) object relational mapper, to manage
+tables in our database using classes. Mappings from database tables to classes
+are defined in [models.py](https://github.com/benvandenbosch/honk-api/blob/master/app/models.py)
+
+**Set up a Local Database for Development**
+
+While within the project's virtual environment and in the root directory, run the command `flask db upgrade`. This will apply the most recent migration script from the [migrations](https://github.com/benvandenbosch/honk-api/tree/master/migrations) directory, making any additions/changes not in the local database.
+
+**Add or Edit Tables in the Database**
+
+Migrations are handled using [Flask-Migrate](https://github.com/miguelgrinberg/flask-migrate), a wrapper for the [Alembic](https://alembic.sqlalchemy.org/en/latest/) database migration tool for SQLAlchemy.
+
+
+Table schemas are contained in [models.py](https://github.com/benvandenbosch/honk-api/blob/master/app/models.py). To edit a table, edit its class in this file. For a new table, add a new class.
+
+Run `flask db migrate` to create a migration script that can apply these changes.
+
+Finally, run `flask db upgrade` to apply the migration script locally.
+
+**Downgrade the Database**
+If you need to downgrade to a previous version of the database, the command `flask db downgrade` will revert the last migration.
 
 ### Virtual Environment
 <a name=venv></a>
