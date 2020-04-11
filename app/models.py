@@ -1,7 +1,7 @@
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_login import UserMixin
 
 """
 This file is where database models will be held. SQLAlchemy automatically performs
@@ -19,7 +19,7 @@ this file. Each table should have a corresponding model below.
 
 
 # Argument "db.Model" is base for all data models in Flask-SQLAlchemy
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -50,9 +50,9 @@ class User(db.Model):
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email']:
             if field in data:
-                setattr(self, field, data['field'])
+                setattr(self, field, data[field])
         if new_user and 'password' in data:
-            self.setpassword(data['password'])
+            self.set_password(data['password'])
 
 
 class Message(db.Model):
