@@ -1,2 +1,3 @@
 honkenv/
 app.db
+__pycache__/
