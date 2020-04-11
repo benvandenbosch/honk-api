@@ -4,13 +4,26 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 
-honk = Flask(__name__)
+# Create instances of extensions with global scope
+db = SQLAlchemy()
+migrate = Migrate()
 
-# Use the Config class from config.py module to cofigure the app environment
-honk.config.from_object(Config)
+# Use the Config class from config.py module to create an instance of the app
+def create_app(config_class=Config):
 
-# Create database & database migration instances
-db = SQLAlchemy(honk)
-migrate = Migrate(honk, db)
+    # Create an instance of the application
+    honk = Flask(__name__)
 
-from app import routes, models
+    # Use the config class to initalize the environment
+    honk.config.from_object(Config)
+
+    # Bind extension instances to the current application
+    db.init_app(honk)
+    migrate.init_app(honk, db)
+
+    from app.main import bp as main_bp
+    honk.register_blueprint(main_bp)
+
+    return honk
+
+from app import models

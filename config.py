@@ -1,12 +1,15 @@
 import os
+from dotenv import load_dotenv
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 # Configurations settings for the Flask app defined as class variables in
 # config object
 class Config(object):
 
     # Used as a key for generating signatures & tokens
-    SECRET_KEY = os.environ.get('SECRERT_KEY') or 'ha will not guess this'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'ha will not guess this'
 
     # Set the location of the db (used by Flask-SQLAlchemy extension)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
