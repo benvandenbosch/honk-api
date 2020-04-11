@@ -8,9 +8,8 @@ Please use make use of Python's virtual environment tools in dependency/package 
 3. Initalize the database on your development machine. ([see here](#database))
 4. Run the flask application on the development server with `flask run`. It will be available on the local IP address `127.0.0.1`.
 
-
-### Dev Database Initialization & Migration
 <a name=database></a>
+### Dev Database Initialization & Migration
 The Honk API implements a local SQLite database to reap the efficiencies of local data
 storage for development and for its convenience in our database server/client model.
 
@@ -37,11 +36,11 @@ Finally, run `flask db upgrade` to apply the migration script locally.
 **Downgrade the Database**
 If you need to downgrade to a previous version of the database, the command `flask db downgrade` will revert the last migration.
 
-### Virtual Environment
 <a name=venv></a>
+### Virtual Environment
 **Dependencies**
 
-All of the dependencies for honk-api will live in `dependencies.txt` within the root directory for the project.
+All of the dependencies for honk-api will live in `requirements.txt` within the root directory for the project.
 
 
 Developers on Honk API will use Python's `venv` package to manage dependencies within the application. Developers must be running Python 3.4 or newer to use this tool. In our application, this directory will be called `honkenv`.
@@ -60,16 +59,16 @@ To activate the virtual environment, from the project root directory, run the co
 
 **Provisioning the environment**
 
-To install all dependencies within your virtual environment, run the command: `pip install -r dependencies.txt`. This command will also work to make sure you are up to date with
+To install all dependencies within your virtual environment, run the command: `pip install -r requirements.txt`. This command will also work to make sure you are up to date with
 
 **Adding a Dependency**
 
 To add a dependency to the virtual environment, first install the package within your local virtual environment: `pip install <name_of_dependency>`
 
 
-Then, run `pip install -r dependencies.txt` to make sure your virtual environment is up to date.
+Then, run `pip install -r requirements.txt` to make sure your virtual environment is up to date.
 
-Finally, add it to `dependencies.txt` so other developers can include it too: `pip freeze > dependencies.txt`
+Finally, add it to `requirements.txt` so other developers can include it too: `pip freeze > requirements.txt`
 
 **Deactivate the virtual environment**
 
