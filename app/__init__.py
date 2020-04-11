@@ -24,6 +24,9 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     honk.register_blueprint(main_bp)
 
+    from app.rest_api import bp as rest_api_bp
+    honk.register_blueprint(rest_api_bp, url_prefix='/rest_api')
+
     return honk
 
 from app import models

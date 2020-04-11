@@ -36,6 +36,24 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    # Represent as a JSON object
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
+
+        return data
+
+    # Convert from JSON object to Python object
+    def from_dict(self, data, new_user=False):
+        for field in ['username', 'email']:
+            if field in data:
+                setattr(self, field, data['field'])
+        if new_user and 'password' in data:
+            self.setpassword(data['password'])
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
