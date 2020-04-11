@@ -35,7 +35,7 @@ To install all dependencies within your virtual environment, run the command: `p
 
 **Adding a Dependency**
 
-To add a dependency to the virtual environment, first install the package within your local virtual environment: `pip install <name_of_dependency`
+To add a dependency to the virtual environment, first install the package within your local virtual environment: `pip install <name_of_dependency>`
 
 
 Then, run `pip install -r dependencies.txt` to make sure your virtual environment is up to date.
