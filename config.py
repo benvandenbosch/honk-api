@@ -12,8 +12,10 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'ha will not guess this'
 
     # Set the location of the db (used by Flask-SQLAlchemy extension)
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-    'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+    print(SQLALCHEMY_DATABASE_URI)
+    print(basedir)
 
     # Disable signal to application each time change is made to db
     SQLALCHEMY_TRACK_MODIFICATIONS = False
