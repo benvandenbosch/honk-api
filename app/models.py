@@ -99,6 +99,7 @@ class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime)
+    # messages = db.relationship('Message', backref='chats', lazy='dynamic')
 
     def from_dict(self, data):
         self.name = data['name']
