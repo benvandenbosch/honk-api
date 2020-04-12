@@ -1,6 +1,6 @@
 # honk-api
 
-TODO: insert build status
+Upon pushes to master, the app is automatically deployed to Heroku pending Continuous Integration approval from Travis CI.
 
 ## Development on Honk API
 Please use make use of Python's virtual environment tools in dependency/package management.
