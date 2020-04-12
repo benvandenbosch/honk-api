@@ -1,9 +1,9 @@
 from app.api import bp
 from flask import jsonify, request, url_for, g
 from app.api.errors import bad_request
-from app.models import User
+from app.models import User, Chat
 from app import db
-from app import daos.user_dao as user_dao
+from app.daos import chat_dao, user_dao
 from app.api.auth import token_auth
 from datetime import datetime
 
@@ -23,11 +23,23 @@ def create_chat():
 
     for member in data['members']:
         new_member = user_dao.get_user_by_username(member['username']).first()
-        new_member.join_chat(chat)
+        if new_member != None:
+            new_member.join_chat(chat)
+    g.current_user.join_chat(chat)
+    db.session.commit()
 
     response = jsonify(chat.to_dict())
     response.status_code = 201
 
     return response
 
-    return response
+@bp.route('/chats/<int:id>', methods=['GET'])
+@token_auth.login_required
+def get_chat(id):
+    chat = chat_dao.get_chat_by_id(id)
+    if chat is None:
+        return bad_request('not a valid chat id')
+    if not g.current_user.is_member(chat):
+        return bad_request('user not authorized for chat')
+
+    return jsonify(chat.to_dict())
