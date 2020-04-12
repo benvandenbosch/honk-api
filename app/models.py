@@ -10,16 +10,24 @@ the translation from raw data in a table to an object based on the models in
 this file. Each table should have a corresponding model below.
 """
 
-# @login.user_loader # Decorator so flask-login knows this is the user loading func
-# def load_user(id):
-#     """
-#     Load a user given the ID. Allows flask-login to load a user (since it does
-#     not have any knowledge of the database)
-#     """
-#     return User.query.get(int(id))
+######################
+# Association Tables #
+######################
 
+# Association between chat and the users that are members of it
+memberships = db.Table(
+    'memberships',
+    db.Column('member_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('chat_id', db.Integer, db.ForeignKey('chat.id'))
+)
 
+######################
+# Classes            *
+######################
+# Each class represents a table in the database
 # Argument "db.Model" is base for all data models in Flask-SQLAlchemy
+
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -28,6 +36,9 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Message', backref='sender', lazy='dynamic')
     token = db.Column(db.String(32), index=True, unique = True)
     token_expiration = db.Column(db.DateTime)
+    chats = db.relationship(
+        'Chat', secondary=memberships, backref='members', lazy='dynamic'
+    )
 
     # Tell Python how to print objects of this class
     def __repr__(self):
@@ -51,6 +62,13 @@ class User(UserMixin, db.Model):
 
     def revoke_token(self):
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    def is_member(self, chat):
+        return self.chats.filter(memberships.c.chat_id == chat.id).count() > 0
+
+    def join_chat(self, chat):
+        if not self.is_member(chat):
+            self.chats.append(chat)
 
     @staticmethod # (Belongs to class rather than specific instance)
     def check_token(token):
@@ -77,6 +95,22 @@ class User(UserMixin, db.Model):
         if new_user and 'password' in data:
             self.set_password(data['password'])
 
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime)
+
+    def from_dict(self, data):
+        self.name = data['name']
+        self.created_at = datetime.utcnow()
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name
+            }
+
+        return data
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

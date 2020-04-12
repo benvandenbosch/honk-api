@@ -4,7 +4,7 @@ from config import Config
 from datetime import datetime, timedelta
 import unittest
 from app import create_app, db
-from app.models import User, Message
+from app.models import User, Message, Chat
 from config import Config
 
 
@@ -31,6 +31,20 @@ class UserModelCase(unittest.TestCase):
         u.set_password('cat')
         self.assertFalse(u.check_password('dog'))
         self.assertTrue(u.check_password('cat'))
+
+    def test_add_member(self):
+        u = User(username='test', email='test@email.com')
+        db.session.add(u)
+        db.session.commit()
+
+        c = Chat(name='chat1')
+        db.session.add(c)
+        db.session.commit()
+
+        u.join_chat(c)
+        db.session.commit()
+
+        self.assertEqual(u.chats.count(), 1)
 
 
 if __name__ == '__main__':
