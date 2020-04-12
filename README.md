@@ -1,5 +1,7 @@
 # honk-api
 
+TODO: insert build status
+
 ## Development on Honk API
 Please use make use of Python's virtual environment tools in dependency/package management.
 
