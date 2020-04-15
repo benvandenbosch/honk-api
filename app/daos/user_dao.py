@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.models import User
+from app.models.user_model import User
 from app import db
 
 """
@@ -18,3 +18,8 @@ def get_user_by_id(id):
 def get_user_by_username(username):
     user = User.query.filter_by(username=username).first()
     return user
+
+# Get multiple users by username
+def get_users_by_username(usernames):
+    users = User.query.filter(User.username.in_(usernames)).all()
+    return users

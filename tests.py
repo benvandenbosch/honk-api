@@ -4,7 +4,9 @@ from config import Config
 from datetime import datetime, timedelta
 import unittest
 from app import create_app, db
-from app.models import User, Message, Chat
+from app.models.user_model import User
+from app.models.message_model import Message
+from app.models.chat_model import Chat
 from config import Config
 from flask import jsonify
 from flask_testing import TestCase

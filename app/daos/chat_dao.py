@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.models import Chat
+from app.models.chat_model import Chat
 from app import db
 
 """

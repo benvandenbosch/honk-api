@@ -1,5 +1,7 @@
 # honk-api
 [![Build Status](https://travis-ci.com/benvandenbosch/honk-api.svg?token=81DqBYxnHbNVq1JPsF5x&branch=master)](https://travis-ci.com/github/benvandenbosch/honk-api)
+
+
 Upon pushes to master, the app is automatically deployed to Heroku pending Continuous Integration approval from Travis CI.
 
 ## Development on Honk API

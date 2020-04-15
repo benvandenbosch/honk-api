@@ -1,5 +1,6 @@
 from app import create_app, db
-from app.models import User, Message
+from app.models.user_model import User
+from app.models.message_model import Message
 """
 Start the application by importing honk from the app directory.
 By importing the app package, the __init__ script is run, which
