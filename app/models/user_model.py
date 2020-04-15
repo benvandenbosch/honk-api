@@ -43,7 +43,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     # Issue a token to the user for API authentication
-    def get_token(self, expires_in=3600):
+    def get_token(self, expires_in=168):
         now = datetime.utcnow()
         if self.token and self.token_expiration > now + timedelta(seconds=60):
             return self.token
@@ -53,7 +53,7 @@ class User(UserMixin, db.Model):
         return self.token
 
     def revoke_token(self):
-        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+        self.token_expiration = datetime.utcnow() - timedelta(hours=1)
 
     def is_member(self, chat):
         return self.chats.filter(memberships.c.chat_id==chat.id).count() > 0
