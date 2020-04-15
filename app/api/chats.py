@@ -1,7 +1,8 @@
 from app.api import bp
 from flask import jsonify, request, url_for, g
 from app.api.errors import bad_request
-from app.models import User, Chat
+from app.models.user_model import User
+from app.models.chat_model import Chat
 from app import db
 from app.daos import chat_dao, user_dao
 from app.api.auth import token_auth

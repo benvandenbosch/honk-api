@@ -4,15 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import base64, os
 
-"""
-This file is where database models will be held. SQLAlchemy automatically performs
-the translation from raw data in a table to an object based on the models in
-this file. Each table should have a corresponding model below.
-"""
-
-######################
-# Association Tables #
-######################
 
 # Association between chat and the users that are members of it
 memberships = db.Table(
@@ -94,33 +85,3 @@ class User(UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
-
-class Chat(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime)
-    # messages = db.relationship('Message', backref='chats', lazy='dynamic')
-
-    def from_dict(self, data):
-        self.name = data['name']
-        self.created_at = datetime.utcnow()
-
-    def to_dict(self):
-        members = [member.username for member in self.members]
-        data = {
-            'id': self.id,
-            'name': self.name,
-            'created_at': self.created_at,
-            'members': members
-            }
-
-        return data
-
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id  = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return('<Message {}>'.format(self.content))
