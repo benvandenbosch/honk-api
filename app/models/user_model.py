@@ -24,12 +24,15 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    posts = db.relationship('Message', backref='sender', lazy='dynamic')
     token = db.Column(db.String(32), index=True, unique = True)
     token_expiration = db.Column(db.DateTime)
+
+    # Many to many relationship using the memberships association table
     chats = db.relationship(
         'Chat', secondary=memberships, backref='members', lazy='dynamic'
     )
+
+    # One to many relationship with messages table
     messages = db.relationship('Message', backref='author', lazy='dynamic')
 
     # Tell Python how to print objects of this class
@@ -48,7 +51,7 @@ class User(UserMixin, db.Model):
         if self.token and self.token_expiration > now + timedelta(seconds=60):
             return self.token
         self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
-        self.token_expiration = now + timedelta(seconds=expires_in)
+        self.token_expiration = now + timedelta(hours=expires_in)
         db.session.add(self)
         return self.token
 

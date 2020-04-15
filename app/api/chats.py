@@ -8,6 +8,16 @@ from app.daos import chat_dao, user_dao
 from app.api.auth import token_auth
 from datetime import datetime
 
+"""
+CREATE A CHAT
+
+ARGUMENTS
+ - Chat name (display name for the chat)
+ - Members (usernames of other members to be added to the chat)
+
+ RETURN
+ - Chat object in json form
+"""
 @bp.route('/chats', methods=['POST'])
 @token_auth.login_required
 def create_chat():
@@ -22,10 +32,12 @@ def create_chat():
     db.session.add(chat)
     db.session.commit()
 
-    for member in data['members']:
-        new_member = user_dao.get_user_by_username(member['username']).first()
-        if new_member != None:
-            new_member.join_chat(chat)
+
+    g.current_user.join_chat(chat)
+    new_members = user_dao.get_users_by_username(data['members'])
+    for mem in new_members:
+        mem.join_chat(chat)
+
     g.current_user.join_chat(chat)
     db.session.commit()
 
@@ -33,6 +45,36 @@ def create_chat():
     response.status_code = 201
 
     return response
+
+"""
+ADD A USER TO AN EXISTING CHAT
+
+ARGUMENTS
+- Username of user to add to chat
+
+RETURN
+- Chat object in JSON form
+"""
+@bp.route('/chats/<int:id>', methods=['PUT'])
+@token_auth.login_required
+def add_user():
+    data = request.get_json() or {}
+    chat = get_chat_by_id(id)
+    if g.current_user not in chat.members:
+        return bad_request('user must be member of chat with given chat id number')
+
+    if 'username' not in data or get_user_by_username(data['username']) is None:
+        return bad_request('valid username must be provided')
+
+    new_member = get_user_by_username(data['username'])
+    new_member.join_chat(chat)
+    db.session.commit()
+
+    response = jsonify(chat.to_dict())
+    response.status_code = 201
+
+    return response
+
 
 @bp.route('/chats/<int:id>', methods=['GET'])
 @token_auth.login_required
@@ -43,4 +85,7 @@ def get_chat(id):
     if not g.current_user.is_member(chat):
         return bad_request('user not authorized for chat')
 
-    return jsonify(chat.to_dict())
+    response = jsonify(chat.to_dict())
+    response.status_code = 200
+
+    return response

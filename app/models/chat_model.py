@@ -1,12 +1,12 @@
 from app import db
 from datetime import datetime, timedelta
-from app.models.user_model import User
+
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime)
-    messages = db.relationship('Message', backref='chats', lazy='dynamic')
+    messages = db.relationship('Message', backref='chat', lazy='dynamic')
 
 
     def from_dict(self, data):
@@ -19,7 +19,7 @@ class Chat(db.Model):
             'id': self.id,
             'name': self.name,
             'created_at': self.created_at,
-            'members': self.members
+            'members': members
             }
 
         return data
