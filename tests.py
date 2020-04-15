@@ -11,6 +11,8 @@ from config import Config
 from flask import jsonify
 from flask_testing import TestCase
 import json
+import base64
+from requests.auth import _basic_auth_str
 
 
 # Create subclass to override SQLAlchemy config and make in-memory SQLite db
@@ -62,21 +64,15 @@ class UserSignupFlow(TestCase):
         return create_app(TestConfig)
 
     def setUp(self):
-        # self.app = create_app(self)
-        # self.app_context = self.app.app_context()
-        # self.app_context.push()
         db.create_all()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-        # self.app_context.pop()
 
     # Test that a user can be created and proper response is returned
     def test_create_user(self):
         header = {"Content-Type": "application/json"}
-        self.assertTrue(True)
-
         payload = json.dumps({
             'username': 'testuser',
             'email': 'test@example.com',
@@ -93,6 +89,31 @@ class UserSignupFlow(TestCase):
 
         # Assert that response is equal to database entry
         self.assertEqual(expected_response, response.json)
+
+    def test_create_token(self):
+        header = {"Content-Type": "application/json"}
+        payload = json.dumps({
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': 'testpassword'
+        })
+        self.client.post('/api/users', headers=header, data=payload)
+
+
+        # Test that a registered user can get a token
+        header = {"Authorization": _basic_auth_str('testuser', 'testpassword')}
+        response = self.client.post('/api/tokens', headers=header)
+
+        self.assertTrue(response.status_code == 200)
+
+        # Test that the token works at a token-guarded endpoint
+        token = response.json['token']
+        header = {'Authorization': ('Bearer ' + token)}
+        response = self.client.get('api/users/' + str(1), headers=header)
+
+        self.assertTrue(response.json['username'] == 'testuser')
+        self.assertTrue(response.status_code == 200)
+
 
 
 if __name__ == '__main__':
