@@ -8,6 +8,7 @@ from app import db
 from app.daos import chat_dao, user_dao
 from app.api.auth import token_auth
 from datetime import datetime
+from sqlalchemy import desc
 
 """
 SEND A MESSAGE
@@ -47,13 +48,35 @@ def send_message():
 
     return response
 
+"""
+Get all messages for a user by chat id
+
+"""
+@bp.route('/messages/<int:chat_id>', methods=['GET'])
+@token_auth.login_required
+def get_chat_messages(chat_id):
+    chat = chat_dao.get_chat_by_id(chat_id)
+
+    if g.current_user not in chat.members:
+        return bad_request('user must be member of chat with given chat id number')
+
+    messages = Message.query.filter_by(chat_id=chat_id).order_by(desc(Message.created_at)).all()
+
+    response = jsonify([message.to_dict() for message in messages])
+    response.status_code = 200
+
+    return response
+
+"""
+Get all messages for a user regardless of chat
+"""
 @bp.route('/messages', methods=['GET'])
 @token_auth.login_required
 def get_messages():
     # Get all the ids for chats the user is a part
     chat_ids = [chat.id for chat in g.current_user.chats]
-    messages = Message.query.filter(Message.chat_id.in_(chat_ids))
+    messages = Message.query.filter(Message.chat_id.in_(chat_ids)).order_by(desc(Message.created_at)).all()
     response = jsonify([message.to_dict() for message in messages])
-    response.status_code = 201
+    response.status_code = 200
 
     return response
