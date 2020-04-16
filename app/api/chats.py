@@ -57,16 +57,17 @@ RETURN
 """
 @bp.route('/chats/<int:id>', methods=['PUT'])
 @token_auth.login_required
-def add_user():
+def add_user(id):
     data = request.get_json() or {}
-    chat = get_chat_by_id(id)
+    chat = chat_dao.get_chat_by_id(id)
+    
     if g.current_user not in chat.members:
         return bad_request('user must be member of chat with given chat id number')
 
-    if 'username' not in data or get_user_by_username(data['username']) is None:
+    if 'username' not in data or user_dao.get_user_by_username(data['username']) is None:
         return bad_request('valid username must be provided')
 
-    new_member = get_user_by_username(data['username'])
+    new_member = user_dao.get_user_by_username(data['username'])
     new_member.join_chat(chat)
     db.session.commit()
 

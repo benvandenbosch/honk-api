@@ -15,6 +15,16 @@ import base64
 from requests.auth import _basic_auth_str
 
 
+def get_token(username, password):
+    """
+    Utility function for getting auth tokens without repeating API call in
+    every test
+    """
+    header = {"Authorization": _basic_auth_str(username, password)}
+    response = self.client.post('/api/tokens', headers=header)
+    return response.json['token']
+
+
 # Create subclass to override SQLAlchemy config and make in-memory SQLite db
 class TestConfig(Config):
     TESTING = True
@@ -113,6 +123,80 @@ class UserSignupFlow(TestCase):
 
         self.assertTrue(response.json['username'] == 'testuser')
         self.assertTrue(response.status_code == 200)
+
+class MessageOps(TestCase):
+
+    def create_app(self):
+        return create_app(TestConfig)
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    # Test that a user can be created and proper response is returned
+    def test_create_chat(self):
+
+        # Create three test users before each test
+        user_one = User(username='testuser1',email='test1@test.com')
+        user_one.set_password('testpass')
+        user_one.get_token()
+
+        user_two = User(username='testuser2',email='test2@test.com')
+        user_two.set_password('testpass2')
+        user_two.get_token()
+
+        user_three = User(username='testuser3',email='test3@test.com')
+        user_three.set_password('testpass3')
+        user_three.get_token()
+
+        db.session.commit()
+
+        # Create a chat with another user
+        header = {'Authorization': 'Bearer ' + user_one.token,
+                  "Content-Type": "application/json"}
+        payload = json.dumps({
+            'name': 'testchat1',
+            'members': [
+                'testuser2'
+            ]
+        })
+        response = self.client.post('/api/chats', headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json['name'] == 'testchat1')
+        self.assertTrue(response.json['members'] == ['testuser1', 'testuser2'])
+
+        chat1_id = response.json['id']
+
+        # Test that an error is not thrown if a user already in the chat is added
+        payload = json.dumps({
+            'username': 'testuser1'
+        })
+        response = self.client.put('/api/chats/' + str(chat1_id), headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json['members'] == ['testuser1', 'testuser2'])
+
+
+        # Test that another user cannot join the chat without being added
+        header = {'Authorization': 'Bearer ' + user_three.token,
+                  "Content-Type": "application/json"}
+        payload = json.dumps({
+            'username': 'testuser3'
+        })
+        response = self.client.put(('/api/chats/' + str(chat1_id)), headers=header, data=payload)
+        self.assertEqual(response.status_code, 400)
+
+        # Test that a user can be successfully added by current chat member
+        header = {'Authorization': 'Bearer ' + user_one.token,
+                  "Content-Type": "application/json"}
+        payload = json.dumps({
+         'username': 'testuser3'
+        })
+        response = self.client.put(('/api/chats/' + str(chat1_id)), headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json['members'] == ['testuser1', 'testuser2', 'testuser3'])
 
 
 
