@@ -18,12 +18,11 @@ def create_community():
 
     community = Community()
     community.from_dict(data)
-    subscription = Subscription(priveleges=1)
-    subscription.subscriber.append(g.current_user)
+    subscription = Subscription(priveleges=1) # Creator should be an admin
+    subscription.user = g.current_user
     community.subscriptions.append(subscription)
-    db.session.add(community)
-    db.session.add(subscription)
     db.session.commit()
+
 
     response = jsonify(community.to_dict())
     response.status_code = 201

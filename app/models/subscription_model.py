@@ -11,7 +11,7 @@ class Subscription(db.Model):
     priveleges = db.Column(db.Integer)
 
     # Relationship with Community
-    community = db.relationship("Community", backref="communities")
+    community = db.relationship("Community", back_populates="subscriptions")
 
     # Relationship with User
-    subscriber = db.relationship("User", backref="subscribers")
+    user = db.relationship("User", back_populates="subscriptions")

@@ -35,6 +35,8 @@ class User(UserMixin, db.Model):
     # One to many relationship with messages table
     messages = db.relationship('Message', backref='author', lazy='dynamic')
 
+    subscriptions = db.relationship("Subscription", back_populates="user")
+
     # Tell Python how to print objects of this class
     def __repr__(self):
         return('<User {}>'.format(self.username))

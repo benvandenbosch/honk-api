@@ -8,16 +8,24 @@ class Community(db.Model):
     description = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     chats = db.relationship("Chat", backref="community", lazy="dynamic")
+    subscriptions = db.relationship("Subscription", back_populates="community")
 
     def to_dict(self):
+        admins = []
+        for subscription in self.subscriptions:
+            if subscription.priveleges == 1:
+                admins.append(subscription.user.username)
         data = {
             'id': self.id,
             'name': self.name,
             'description': self.description,
             'created_at': self.created_at,
-            'subscribers': [subscriber.username for subscriber in subscribers]
+            'subscribers': [subscription.user.username for subscription in self.subscriptions],
+            'admins': admins
         }
 
+        return data
+
     def from_dict(self, data):
-        name = data['name']
-        description = data['description']
+        self.name = data['name']
+        self.description = data['description']

@@ -309,5 +309,40 @@ class MessageOps(TestCase):
         self.assertEqual(response.json[0]['content'], "ha, yeah, unless we add him to it")
         self.assertEqual(response.json[1]['content'], "hey one, we're in this chat without 3")
 
+class Communities(TestCase):
+
+    def create_app(self):
+        return create_app(TestConfig)
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_create_community(self):
+        # Create three test users
+        user_one = User(username='testuser1',email='test1@test.com')
+        user_one.set_password('testpass')
+        user_one.get_token()
+
+        db.session.commit()
+
+        # Create a chat with another user
+        header = {'Authorization': 'Bearer ' + user_one.token,
+                  "Content-Type": "application/json"}
+        payload = json.dumps({
+            'name': 'community1',
+            'description': 'a place for hanging out'
+        })
+        response = self.client.post('/api/communities', headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json['name'], 'community1')
+        self.assertEqual(response.json['description'], 'a place for hanging out')
+        self.assertEqual(response.json['admins'], ['testuser1'])
+        self.assertEqual(response.json['subscribers'], ['testuser1'])
+
+
 if __name__ == '__main__':
     unittest.main()
