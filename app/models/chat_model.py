@@ -6,7 +6,7 @@ class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
     name = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     messages = db.relationship('Message', backref='chat', lazy='dynamic')
 
 
@@ -20,7 +20,8 @@ class Chat(db.Model):
             'id': self.id,
             'name': self.name,
             'created_at': self.created_at,
-            'members': members
+            'members': members,
+            'community': self.community.name if self.community else None
             }
 
         return data
