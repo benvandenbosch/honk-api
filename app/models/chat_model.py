@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime)
     messages = db.relationship('Message', backref='chat', lazy='dynamic')

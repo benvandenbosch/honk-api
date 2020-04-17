@@ -7,13 +7,7 @@ class Community(db.Model):
     name = db.Column(db.String(100), index=True, unique=True)
     description = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Many to many relationship with user (Subscription as association object)
-    subscribers = db.relationship("Subscription", backref="community", lazy='dynamic')
-
-    # One to many relationship with chats
-    chats = db.relationship("Chat", backref='community', lazy='dynamic')
-
+    chats = db.relationship("Chat", backref="community", lazy="dynamic")
 
     def to_dict(self):
         data = {
