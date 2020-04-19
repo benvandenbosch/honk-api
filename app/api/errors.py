@@ -9,9 +9,11 @@ def error_response(status_code, message=None):
     response.status_code = status_code
     return response
 
-
 def bad_request(message):
     return error_response(400, message)
 
 def duplicate_resource_error(message):
     return error_response(409, message)
+
+def unauthorized_resource(message):
+    return  error_response(401, message)

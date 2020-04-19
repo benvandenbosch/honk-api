@@ -23,3 +23,6 @@ def get_user_by_username(username):
 def get_users_by_username(usernames):
     users = User.query.filter(User.username.in_(usernames)).all()
     return users
+
+def is_user(username):
+    return User.query.filter_by(username=username).count() > 0

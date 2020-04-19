@@ -174,7 +174,7 @@ class MessageOps(TestCase):
         payload = json.dumps({
             'username': 'testuser1'
         })
-        response = self.client.put('/api/chats/' + str(chat1_id), headers=header, data=payload)
+        response = self.client.put('/api/chats/invite/' + str(chat1_id), headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2'])
 
@@ -185,7 +185,7 @@ class MessageOps(TestCase):
         payload = json.dumps({
             'username': 'testuser3'
         })
-        response = self.client.put(('/api/chats/' + str(chat1_id)), headers=header, data=payload)
+        response = self.client.put(('/api/chats/invite/' + str(chat1_id)), headers=header, data=payload)
         self.assertEqual(response.status_code, 400)
 
         # Test that a user can be successfully added by current chat member
@@ -194,7 +194,7 @@ class MessageOps(TestCase):
         payload = json.dumps({
          'username': 'testuser3'
         })
-        response = self.client.put(('/api/chats/' + str(chat1_id)), headers=header, data=payload)
+        response = self.client.put(('/api/chats/invite/' + str(chat1_id)), headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2', 'testuser3'])
 
@@ -321,7 +321,7 @@ class Communities(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_create_community(self):
+    def test_unit_community(self):
         # Create three test users
         user_one = User(username='testuser1',email='test1@test.com')
         user_one.set_password('testpass')
@@ -343,6 +343,17 @@ class Communities(TestCase):
         self.assertEqual(response.json['admins'], ['testuser1'])
         self.assertEqual(response.json['subscribers'], ['testuser1'])
 
+        # Test adding a user to a community
+        user_two = User(username='testuser2', email='test2@test.com')
+        db.session.add(user_two)
+        db.session.commit()
+        payload = json.dumps({
+            'username': 'testuser2',
+            'community_name': 'community1'
+        })
+        response = self.client.put('/api/communities/invite', headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json['subscribers'], ['testuser1', 'testuser2'])
 
 if __name__ == '__main__':
     unittest.main()

@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     # One to many relationship with messages table
     messages = db.relationship('Message', backref='author', lazy='dynamic')
 
-    subscriptions = db.relationship("Subscription", back_populates="user")
+    subscriptions = db.relationship("Subscription", back_populates="user", lazy='dynamic')
 
     # Tell Python how to print objects of this class
     def __repr__(self):
@@ -66,6 +66,9 @@ class User(UserMixin, db.Model):
     def join_chat(self, chat):
         if not self.is_member(chat):
             self.chats.append(chat)
+
+    def is_subscribed(self, community):
+        return self.subscriptions.filter_by(community_id=community.id).count() > 0
 
     @staticmethod # (Belongs to class rather than specific instance)
     def check_token(token):

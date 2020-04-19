@@ -3,8 +3,9 @@ from flask import jsonify, request, url_for, g
 from app.api.errors import bad_request
 from app.models.user_model import User
 from app.models.chat_model import Chat
+from app.models.community_model import Community
 from app import db
-from app.daos import chat_dao, user_dao
+from app.daos import chat_dao, user_dao, community_dao
 from app.api.auth import token_auth
 from datetime import datetime
 
@@ -55,12 +56,12 @@ ARGUMENTS
 RETURN
 - Chat object in JSON form
 """
-@bp.route('/chats/<int:id>', methods=['PUT'])
+@bp.route('/chats/invite/<int:id>', methods=['PUT'])
 @token_auth.login_required
 def add_user(id):
     data = request.get_json() or {}
     chat = chat_dao.get_chat_by_id(id)
-    
+
     if g.current_user not in chat.members:
         return bad_request('user must be member of chat with given chat id number')
 
