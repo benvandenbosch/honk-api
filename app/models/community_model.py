@@ -21,7 +21,8 @@ class Community(db.Model):
             'description': self.description,
             'created_at': self.created_at,
             'subscribers': [subscription.user.username for subscription in self.subscriptions],
-            'admins': admins
+            'admins': admins,
+            'chats': [chat.name for chat in self.chats]
         }
 
         return data

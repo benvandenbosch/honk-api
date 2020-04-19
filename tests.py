@@ -7,6 +7,7 @@ from app import create_app, db
 from app.models.user_model import User
 from app.models.message_model import Message
 from app.models.chat_model import Chat
+from app.models.community_model import Community
 from config import Config
 from flask import jsonify
 from flask_testing import TestCase
@@ -354,6 +355,37 @@ class Communities(TestCase):
         response = self.client.put('/api/communities/invite', headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json['subscribers'], ['testuser1', 'testuser2'])
+
+    def test_add_chat_to_community(self):
+        # Create three test users
+        user_one = User(username='testuser1',email='test1@test.com')
+        user_one.set_password('testpass')
+        user_one.get_token()
+
+        db.session.commit()
+
+        # Create a chat with another user
+        header = {'Authorization': 'Bearer ' + user_one.token,
+                  "Content-Type": "application/json"}
+        payload = json.dumps({
+            'name': 'community1',
+            'description': 'a place for hanging out'
+        })
+        response = self.client.post('/api/communities', headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+
+        # Create a chat within the community
+        payload = json.dumps({
+            'name': 'chat1incomm1',
+            'members': [],
+            'community_name': 'community1'
+        })
+        response = self.client.post('/api/chats', headers=header, data=payload)
+        self.assertEqual(response.status_code, 201)
+
+        community = Community.query.first()
+        self.assertEqual(community.to_dict()['chats'], ['chat1incomm1'])
+
 
 if __name__ == '__main__':
     unittest.main()

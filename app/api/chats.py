@@ -1,6 +1,6 @@
 from app.api import bp
 from flask import jsonify, request, url_for, g
-from app.api.errors import bad_request
+from app.api.errors import bad_request, unauthorized_resource
 from app.models.user_model import User
 from app.models.chat_model import Chat
 from app.models.community_model import Community
@@ -24,15 +24,23 @@ ARGUMENTS
 def create_chat():
     data = request.get_json() or {}
 
+    # TODO: Impose community id validation on chat
     # Data validation
     if 'name' not in data or 'members' not in data:
-        return bad_request('must include name and members fields')
+        return bad_request('must include name, members')
 
     chat = Chat()
     chat.from_dict(data)
     db.session.add(chat)
     db.session.commit()
 
+     # TODO: Impose community id validation on chat
+    if 'community_name' in data:
+        community = community_dao.get_community_by_name(data['community_name'])
+        
+        if community is None or not g.current_user.is_subscribed(community):
+            return unauthorized_resource('Community does not exist or user is not subscribed')
+        chat.community = community
 
     g.current_user.join_chat(chat)
     new_members = user_dao.get_users_by_username(data['members'])
