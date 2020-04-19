@@ -22,3 +22,12 @@ def revoke_token():
     g.current_user.revoke_token()
     db.session.commit()
     return '', 204
+
+# Simple endpoint to determine if token is still valid
+@bp.route('/tokens', methods=['GET'])
+@token_auth.login_required
+def get_status():
+    response = jsonify(g.current_user.to_dict())
+    response.status_code = 200
+
+    return response
