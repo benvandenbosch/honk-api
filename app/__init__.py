@@ -29,4 +29,8 @@ def create_app(config_class=Config):
 
     return honk
 
-from app import models
+from app.models.user_model import User
+from app.models.message_model import Message
+from app.models.chat_model import Chat
+from app.models.community_model import Community
+from app.models.subscription_model import Subscription
