@@ -26,6 +26,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     token = db.Column(db.String(32), index=True, unique = True)
     token_expiration = db.Column(db.DateTime)
+    apns = db.Column(db.String(200))
 
     # Many to many relationship using the memberships association table
     chats = db.relationship(
@@ -94,3 +95,5 @@ class User(UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+        if 'apns' in data:
+            self.apns = data['apns']
