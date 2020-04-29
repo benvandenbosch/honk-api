@@ -83,7 +83,8 @@ class User(UserMixin, db.Model):
         data = {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'apns': self.apns
         }
 
         return data
