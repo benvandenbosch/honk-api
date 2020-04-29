@@ -2,11 +2,21 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from gobiko.apns import APNsClient
+import os
 
 
 # Create instances of extensions with global scope
 db = SQLAlchemy()
 migrate = Migrate()
+
+# Create a global APNsClient object
+apns_client = APNsClient(
+    team_id=os.environ.get('APNS_TEAM_ID'),
+    bundle_id=os.environ.get('APNS_BUNDLE_ID'),
+    auth_key_id=os.environ.get('APNS_AUTH_KEY_ID'),
+    auth_key=os.environ.get('APNS_KEY')
+)
 
 # Use the Config class from config.py module to create an instance of the app
 def create_app(config_class=Config):

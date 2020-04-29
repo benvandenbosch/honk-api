@@ -9,6 +9,8 @@ from app.daos import chat_dao, user_dao
 from app.api.auth import token_auth
 from datetime import datetime
 from sqlalchemy import desc
+from app.services import notification_service
+import os
 
 """
 SEND A MESSAGE
@@ -45,6 +47,8 @@ def send_message():
     response = jsonify(message.to_dict())
     response.status_code = 201
 
+    if os.environ.get('ENV_NAME') == 'PROD':
+        notification_service.deliver_message_notification(sender=g.current_user,chat=chat)
 
     return response
 
