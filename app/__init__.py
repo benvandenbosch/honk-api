@@ -12,10 +12,10 @@ migrate = Migrate()
 
 # Create a global APNsClient object
 apns_client = APNsClient(
-    team_id=os.environ.get('APNS_TEAM_ID'),
-    bundle_id=os.environ.get('APNS_BUNDLE_ID'),
-    auth_key_id=os.environ.get('APNS_AUTH_KEY_ID'),
-    auth_key=os.environ.get('APNS_KEY')
+    team_id=os.environ.get('APNS_TEAM_ID') or 'test-fake',
+    bundle_id=os.environ.get('APNS_BUNDLE_ID') or 'test-fake',
+    auth_key_id=os.environ.get('APNS_AUTH_KEY_ID' or 'test-fake'),
+    auth_key=os.environ.get('APNS_KEY' or 'test-fake')
 )
 
 # Use the Config class from config.py module to create an instance of the app
