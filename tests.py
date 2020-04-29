@@ -199,6 +199,7 @@ class MessageOps(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2', 'testuser3'])
 
+
     def test_messenger(self):
         # Create three test users
         user_one = User(username='testuser1',email='test1@test.com')

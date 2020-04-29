@@ -37,7 +37,7 @@ def create_chat():
      # TODO: Impose community id validation on chat
     if 'community_name' in data:
         community = community_dao.get_community_by_name(data['community_name'])
-        
+
         if community is None or not g.current_user.is_subscribed(community):
             return unauthorized_resource('Community does not exist or user is not subscribed')
         chat.community = community
@@ -85,6 +85,25 @@ def add_user(id):
 
     return response
 
+
+"""
+LIST ALL CHATS A USER IS A MEMBER OF
+
+ARGUMENTS
+- None
+
+RETURN
+- List of chat objects
+"""
+@bp.route('/chats', methods=['GET'])
+@token_auth.login_required
+def get_memberships():
+
+    # Get a list of the user's chats
+    chat_objects = g.current_user.chats
+    chat_list = [chat.to_dict() for chat in chat_objects]
+
+    return jsonify(chat_list)
 
 @bp.route('/chats/<int:id>', methods=['GET'])
 @token_auth.login_required

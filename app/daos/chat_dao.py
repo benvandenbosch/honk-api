@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, g
 from app.models.chat_model import Chat
 from app import db
 

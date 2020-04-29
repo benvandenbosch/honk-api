@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, g
 from app.models.user_model import User
 from app import db
 
