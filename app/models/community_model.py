@@ -14,13 +14,13 @@ class Community(db.Model):
         admins = []
         for subscription in self.subscriptions:
             if subscription.priveleges == 1:
-                admins.append(subscription.user.username)
+                admins.append(subscription.subscriber.username)
         data = {
             'id': self.id,
             'name': self.name,
             'description': self.description,
             'created_at': self.created_at,
-            'subscribers': [subscription.user.username for subscription in self.subscriptions],
+            'subscribers': [subscription.subscriber.username for subscription in self.subscriptions],
             'admins': admins,
             'chats': [chat.name for chat in self.chats]
         }

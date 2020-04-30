@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 840f79f0b3c7
+Revision ID: 58cd11fb6715
 Revises: 
-Create Date: 2020-04-18 19:33:38.085590
+Create Date: 2020-04-30 13:50:24.807746
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '840f79f0b3c7'
+revision = '58cd11fb6715'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,7 @@ def upgrade():
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('token', sa.String(length=32), nullable=True),
     sa.Column('token_expiration', sa.DateTime(), nullable=True),
+    sa.Column('apns', sa.String(length=200), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
@@ -50,6 +51,9 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('community_id', sa.Integer(), nullable=False),
     sa.Column('priveleges', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('is_active', sa.Integer(), nullable=True),
+    sa.Column('terminated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['community_id'], ['community.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'community_id')

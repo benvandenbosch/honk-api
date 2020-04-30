@@ -36,7 +36,9 @@ class User(UserMixin, db.Model):
     # One to many relationship with messages table
     messages = db.relationship('Message', backref='author', lazy='dynamic')
 
-    subscriptions = db.relationship("Subscription", back_populates="user", lazy='dynamic')
+    subscriptions = db.relationship('Subscription', back_populates="subscriber", lazy='dynamic')
+
+    invitations = db.relationship('Subscription', backref='inviter', lazy='dynamic')
 
     # Tell Python how to print objects of this class
     def __repr__(self):
@@ -69,7 +71,7 @@ class User(UserMixin, db.Model):
             self.chats.append(chat)
 
     def is_subscribed(self, community):
-        return self.subscriptions.filter_by(community_id=community.id).count() > 0
+        return self.subscriptions.filter_by(community_id=community.id, is_active=1).count() > 0
 
     def update(self, data):
         for field in ['email', 'apns']:
