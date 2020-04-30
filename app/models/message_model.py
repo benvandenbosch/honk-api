@@ -4,7 +4,7 @@ import uuid
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(36), index=True, unique=True)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     content = db.Column(db.String(140))
     user_id  = db.Column(db.Integer, db.ForeignKey('user.id'))

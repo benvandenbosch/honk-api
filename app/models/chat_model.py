@@ -5,7 +5,7 @@ import uuid
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(36), index=True, unique=True)
     community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

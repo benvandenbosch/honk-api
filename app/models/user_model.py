@@ -22,7 +22,7 @@ memberships = db.Table(
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(36), index=True, unique=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128))
