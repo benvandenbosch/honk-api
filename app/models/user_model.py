@@ -71,6 +71,11 @@ class User(UserMixin, db.Model):
     def is_subscribed(self, community):
         return self.subscriptions.filter_by(community_id=community.id).count() > 0
 
+    def update(self, data):
+        for field in ['email', 'apns']:
+            if field in data:
+                setattr(self, field, data[field])
+
     @staticmethod # (Belongs to class rather than specific instance)
     def check_token(token):
         user = User.query.filter_by(token=token).first()

@@ -34,6 +34,22 @@ def create_user():
     return response
 
 
+@bp.route('/users', methods=['PUT'])
+@token_auth.login_required
+def edit_user():
+    """
+    Update User values with payload values
+    """
+    data = request.get_json() or {}
+
+    g.current_user.update(data)
+    db.session.commit()
+
+    response = jsonify(g.current_user.to_dict())
+    response.status_code = 200
+
+    return response
+
 @bp.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
     pass
