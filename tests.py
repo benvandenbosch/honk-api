@@ -169,13 +169,13 @@ class MessageOps(TestCase):
         self.assertTrue(response.json['name'] == 'testchat1')
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2'])
 
-        chat1_id = response.json['id']
+        chat1_uuid = response.json['uuid']
 
         # Test that an error is not thrown if a user already in the chat is added
         payload = json.dumps({
             'username': 'testuser1'
         })
-        response = self.client.put('/api/chats/invite/' + str(chat1_id), headers=header, data=payload)
+        response = self.client.put('/api/chats/invite/' + str(chat1_uuid), headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2'])
 
@@ -186,7 +186,7 @@ class MessageOps(TestCase):
         payload = json.dumps({
             'username': 'testuser3'
         })
-        response = self.client.put(('/api/chats/invite/' + str(chat1_id)), headers=header, data=payload)
+        response = self.client.put(('/api/chats/invite/' + str(chat1_uuid)), headers=header, data=payload)
         self.assertEqual(response.status_code, 400)
 
         # Test that a user can be successfully added by current chat member
@@ -195,7 +195,7 @@ class MessageOps(TestCase):
         payload = json.dumps({
          'username': 'testuser3'
         })
-        response = self.client.put(('/api/chats/invite/' + str(chat1_id)), headers=header, data=payload)
+        response = self.client.put(('/api/chats/invite/' + str(chat1_uuid)), headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.json['members'] == ['testuser1', 'testuser2', 'testuser3'])
 
@@ -234,7 +234,7 @@ class MessageOps(TestCase):
         header = {'Authorization': 'Bearer ' + user_one.token,
                 'Content-Type': 'application/json'}
         payload = json.dumps({
-            'chat_id': chat_one.id,
+            'chat_uuid': chat_one.uuid,
             'content': "hey two and three, it is me one"
         })
         response = self.client.post('/api/messages', headers=header, data=payload)
@@ -244,7 +244,7 @@ class MessageOps(TestCase):
         self.assertEqual(response.json['chat'], chat_one.name)
 
         payload = json.dumps({
-            'chat_id': chat_one.id,
+            'chat_uuid': chat_one.uuid,
             'content': "can you guys hear me?"
         })
         response = self.client.post('/api/messages', headers=header, data=payload)
@@ -254,7 +254,7 @@ class MessageOps(TestCase):
         header = {'Authorization': 'Bearer ' + user_three.token,
                 'Content-Type': 'application/json'}
         payload = json.dumps({
-            'chat_id': chat_one.id,
+            'chat_uuid': chat_one.uuid,
             'content': "It's me three! yes I can hear you"
         })
         response = self.client.post('/api/messages', headers=header, data=payload)
@@ -264,14 +264,14 @@ class MessageOps(TestCase):
         header = {'Authorization': 'Bearer ' + user_two.token,
             'Content-Type': 'application/json'}
         payload = json.dumps({
-            'chat_id': chat_one.id,
+            'chat_uuid': chat_one.uuid,
             'content': "I'm here too!"
         })
         response = self.client.post('/api/messages', headers=header, data=payload)
         self.assertEqual(response.status_code, 201)
 
         # Test that messages are loaded properly with get
-        response = self.client.get('/api/messages/' + str(chat_one.id), headers=header)
+        response = self.client.get('/api/messages/' + str(chat_one.uuid), headers=header)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 4)
         self.assertEqual(response.json[0]['author'], 'testuser2')
@@ -281,7 +281,7 @@ class MessageOps(TestCase):
 
         # Start messaging in chat 2
         payload = json.dumps({
-            'chat_id': chat_two.id,
+            'chat_uuid': chat_two.uuid,
             'content': "hey one, we're in this chat without 3"
         })
         response = self.client.post('api/messages', headers=header, data=payload)
@@ -291,7 +291,7 @@ class MessageOps(TestCase):
         header = {'Authorization': 'Bearer ' + user_one.token,
             'Content-Type': 'application/json'}
         payload = json.dumps({
-            'chat_id': chat_two.id,
+            'chat_uuid': chat_two.uuid,
             'content': "ha, yeah, unless we add him to it"
         })
         response = self.client.post('api/messages', headers=header, data=payload)
@@ -300,12 +300,12 @@ class MessageOps(TestCase):
         # Test that 3 can't access things in chat 2
         header = {'Authorization': 'Bearer ' + user_three.token,
             'Content-Type': 'application/json'}
-        response = self.client.get('api/messages/' + str(chat_two.id), headers=header)
+        response = self.client.get('api/messages/' + str(chat_two.uuid), headers=header)
         self.assertEqual(response.status_code, 400)
 
         # Add 3 to chat 2 (simulates getting added)
         user_three.join_chat(chat_two)
-        response = self.client.get('api/messages/' + str(chat_two.id), headers=header)
+        response = self.client.get('api/messages/' + str(chat_two.uuid), headers=header)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]['content'], "ha, yeah, unless we add him to it")

@@ -28,13 +28,13 @@ def send_message():
     data = request.get_json() or {}
 
     # Data validation
-    if 'chat_id' not in data or 'content' not in data:
-        return bad_request('must include chat_id and content fields')
+    if 'chat_uuid' not in data or 'content' not in data:
+        return bad_request('must include chat_uuid and content fields')
 
-    chat = chat_dao.get_chat_by_id(data['chat_id'])
+    chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
 
     if g.current_user not in chat.members:
-        return bad_request('Must provide chat id for chat user is a member of')
+        return bad_request('Must provide chat uuid for chat user is a member of')
 
     message = Message(uuid=str(uuid.uuid4()))
     message.from_dict(data)
@@ -56,15 +56,15 @@ def send_message():
 Get all messages for a user by chat id
 
 """
-@bp.route('/messages/<int:chat_id>', methods=['GET'])
+@bp.route('/messages/<chat_uuid>', methods=['GET'])
 @token_auth.login_required
-def get_chat_messages(chat_id):
-    chat = chat_dao.get_chat_by_id(chat_id)
+def get_chat_messages(chat_uuid):
+    chat = chat_dao.get_chat_by_uuid(chat_uuid)
 
     if g.current_user not in chat.members:
-        return bad_request('user must be member of chat with given chat id number')
+        return bad_request('user must be member of chat with given chat uuid number')
 
-    messages = Message.query.filter_by(chat_id=chat_id).order_by(desc(Message.created_at)).all()
+    messages = Message.query.filter_by(chat_uuid=chat_uuid).order_by(desc(Message.created_at)).all()
 
     response = jsonify([message.to_dict() for message in messages])
     response.status_code = 200

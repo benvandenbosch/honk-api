@@ -7,8 +7,8 @@ class Message(db.Model):
     uuid = db.Column(db.String(36), index=True, unique=True)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     content = db.Column(db.String(140))
-    user_id  = db.Column(db.Integer, db.ForeignKey('user.id'))
-    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
+    user_uuid  = db.Column(db.Integer, db.ForeignKey('user.uuid'))
+    chat_uuid = db.Column(db.Integer, db.ForeignKey('chat.uuid'))
 
     def __repr__(self):
         return('<Message {}>'.format(self.content))
