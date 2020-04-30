@@ -1,6 +1,8 @@
 # honk-api
 [![Build Status](https://travis-ci.com/benvandenbosch/honk-api.svg?token=81DqBYxnHbNVq1JPsF5x&branch=master)](https://travis-ci.com/github/benvandenbosch/honk-api)
 
+[API Documentation](https://github.com/benvandenbosch/honk-api/wiki/Honk-API-Documentation)
+
 
 Upon pushes to master, the app is automatically deployed to Heroku pending Continuous Integration approval from Travis CI.
 
@@ -14,7 +16,7 @@ Please use make use of Python's virtual environment tools in dependency/package 
 
 <a name=database></a>
 ### Dev Database Initialization & Migration
-The Honk API implements a local SQLite database in the development and test environments to reap the efficiencies of local data storage for development and for its convenience in our database server/client model. In production, we use a PostgreSQL database instance connected to our Heroku instance for data persistence. The SQLALCHEMY_DATABASE_URI variable tells Flask-SQLAlchemy what database to connect to. The default is a local SQLite database that is created from scratch if it does not exist, but if the DATABASE_URL environment variable exists (as it does for the PostgreSQL instance in production), then the application will automatically use that database URL. 
+The Honk API implements a local SQLite database in the development and test environments to reap the efficiencies of local data storage for development and for its convenience in our database server/client model. In production, we use a PostgreSQL database instance connected to our Heroku instance for data persistence. The SQLALCHEMY_DATABASE_URI variable tells Flask-SQLAlchemy what database to connect to. The default is a local SQLite database that is created from scratch if it does not exist, but if the DATABASE_URL environment variable exists (as it does for the PostgreSQL instance in production), then the application will automatically use that database URL.
 
 We use [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/), a wrapper
 for the [SQLAlchemy](https://www.sqlalchemy.org) object relational mapper, to manage
