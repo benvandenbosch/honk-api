@@ -14,7 +14,7 @@ from flask_testing import TestCase
 import json
 import base64
 from requests.auth import _basic_auth_str
-
+import uuid
 
 def get_token(username, password):
     """
@@ -45,19 +45,19 @@ class UserModelCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_password_hashing(self):
-        u = User(username='susan')
+        u = User(username='susan', uuid=uuid.uuid4().hex)
         u.set_password('cat')
         self.assertFalse(u.check_password('dog'))
         self.assertTrue(u.check_password('cat'))
 
     def test_join_chat(self):
-        u = User(username='test', email='test@email.com')
-        u2 = User(username='test2', email='test2@gmail.com')
+        u = User(username='test', email='test@email.com', uuid=uuid.uuid4().hex)
+        u2 = User(username='test2', email='test2@gmail.com', uuid=uuid.uuid4().hex)
         db.session.add(u)
         db.session.add(u2)
         db.session.commit()
 
-        c = Chat(name='chat1')
+        c = Chat(name='chat1', uuid=uuid.uuid4().hex)
         db.session.add(c)
         db.session.commit()
 
@@ -141,15 +141,15 @@ class MessageOps(TestCase):
     def test_create_chat(self):
 
         # Create three test users
-        user_one = User(username='testuser1',email='test1@test.com')
+        user_one = User(username='testuser1',email='test1@test.com', uuid=uuid.uuid4().hex)
         user_one.set_password('testpass')
         user_one.get_token()
 
-        user_two = User(username='testuser2',email='test2@test.com')
+        user_two = User(username='testuser2',email='test2@test.com', uuid=uuid.uuid4().hex)
         user_two.set_password('testpass2')
         user_two.get_token()
 
-        user_three = User(username='testuser3',email='test3@test.com')
+        user_three = User(username='testuser3',email='test3@test.com', uuid=uuid.uuid4().hex)
         user_three.set_password('testpass3')
         user_three.get_token()
 
@@ -202,30 +202,30 @@ class MessageOps(TestCase):
 
     def test_messenger(self):
         # Create three test users
-        user_one = User(username='testuser1',email='test1@test.com')
+        user_one = User(username='testuser1',email='test1@test.com', uuid=uuid.uuid4().hex)
         user_one.set_password('testpass')
         user_one.get_token()
 
-        user_two = User(username='testuser2',email='test2@test.com')
+        user_two = User(username='testuser2',email='test2@test.com', uuid=uuid.uuid4().hex)
         user_two.set_password('testpass2')
         user_two.get_token()
 
-        user_three = User(username='testuser3',email='test3@test.com')
+        user_three = User(username='testuser3',email='test3@test.com', uuid=uuid.uuid4().hex)
         user_three.set_password('testpass3')
         user_three.get_token()
 
         # Create test chats
-        chat_one = Chat(name='chat1', created_at=datetime.utcnow())
+        chat_one = Chat(name='chat1', created_at=datetime.utcnow(), uuid=uuid.uuid4().hex)
         chat_one.members.append(user_one)
         chat_one.members.append(user_two)
         chat_one.members.append(user_three)
 
 
-        chat_two = Chat(name='chat2', created_at=datetime.utcnow())
+        chat_two = Chat(name='chat2', created_at=datetime.utcnow(), uuid=uuid.uuid4().hex)
         chat_two.members.append(user_one)
         chat_two.members.append(user_two)
 
-        chat_three = Chat(name='chat3', created_at=datetime.utcnow())
+        chat_three = Chat(name='chat3', created_at=datetime.utcnow(), uuid=uuid.uuid4().hex)
         chat_three.members.append(user_two)
         chat_three.members.append(user_three)
 
@@ -325,7 +325,7 @@ class Communities(TestCase):
 
     def test_unit_community(self):
         # Create three test users
-        user_one = User(username='testuser1',email='test1@test.com')
+        user_one = User(username='testuser1',email='test1@test.com', uuid=uuid.uuid4().hex)
         user_one.set_password('testpass')
         user_one.get_token()
 
@@ -346,7 +346,7 @@ class Communities(TestCase):
         self.assertEqual(response.json['subscribers'], ['testuser1'])
 
         # Test adding a user to a community
-        user_two = User(username='testuser2', email='test2@test.com')
+        user_two = User(username='testuser2', email='test2@test.com', uuid=uuid.uuid4().hex)
         db.session.add(user_two)
         db.session.commit()
         payload = json.dumps({

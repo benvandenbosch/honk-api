@@ -1,9 +1,10 @@
 from app import db
 from datetime import datetime, timedelta
-
+import uuid
 
 class Community(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), index=True, unique=True, default=str(uuid.uuid4()))
     name = db.Column(db.String(100), index=True, unique=True)
     description = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

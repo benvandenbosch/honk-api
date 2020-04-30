@@ -10,7 +10,7 @@ from app.api.auth import token_auth
 from datetime import datetime
 from sqlalchemy import desc
 from app.services import notification_service
-import os
+import os, uuid
 
 """
 SEND A MESSAGE
@@ -36,7 +36,7 @@ def send_message():
     if g.current_user not in chat.members:
         return bad_request('Must provide chat id for chat user is a member of')
 
-    message = Message()
+    message = Message(uuid=str(uuid.uuid4()))
     message.from_dict(data)
     message.author = g.current_user
     message.chat = chat

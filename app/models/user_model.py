@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import base64, os
+import uuid
 
 
 # Association between chat and the users that are members of it
@@ -21,10 +22,11 @@ memberships = db.Table(
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), index=True, unique=True, default=str(uuid.uuid4()))
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128))
-    token = db.Column(db.String(32), index=True, unique = True)
+    token = db.Column(db.String(32), unique = True)
     token_expiration = db.Column(db.DateTime)
     apns = db.Column(db.String(200))
 
@@ -86,7 +88,7 @@ class User(UserMixin, db.Model):
     # Represent as a JSON object
     def to_dict(self):
         data = {
-            'id': self.id,
+            'uuid': self.uuid,
             'username': self.username,
             'email': self.email,
             'apns': self.apns
