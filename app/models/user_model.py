@@ -38,8 +38,6 @@ class User(UserMixin, db.Model):
 
     subscriptions = db.relationship('Subscription', back_populates="subscriber", lazy='dynamic')
 
-    invitations = db.relationship('Subscription', backref='inviter', lazy='dynamic')
-
     # Tell Python how to print objects of this class
     def __repr__(self):
         return('<User {}>'.format(self.username))

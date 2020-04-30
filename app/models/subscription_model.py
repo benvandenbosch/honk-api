@@ -10,11 +10,8 @@ class Subscription(db.Model):
     community_id = db.Column(db.Integer, db.ForeignKey('community.id'), primary_key=True)
     priveleges = db.Column(db.Integer, default=0)
 
-    # Relationship with Community
-    community = db.relationship("Community", back_populates="subscriptions")
-
-    # Relationship with User (one to many)
-    subscriber = db.relationship("User", back_populates="subscriptions")
+    # Username of person who invited this user to the community
+    inviter = db.Column(db.String(64))
 
     # Creation of subscription
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
@@ -24,3 +21,9 @@ class Subscription(db.Model):
 
     # When the subscription is terminated by the user
     terminated_at = db.Column(db.DateTime)
+
+    # Relationship with Community
+    community = db.relationship("Community", back_populates="subscriptions")
+
+    # Relationship with User (one to many)
+    subscriber = db.relationship("User", back_populates="subscriptions")

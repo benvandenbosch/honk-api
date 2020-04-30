@@ -21,7 +21,7 @@ def create_community():
     community.from_dict(data)
     subscription = Subscription(priveleges=1) # Creator should be an admin
     subscription.subscriber = g.current_user
-    subscription.inviter = g.current_user
+    subscription.inviter = g.current_user.username
     community.subscriptions.append(subscription)
     db.session.commit()
 
@@ -50,7 +50,7 @@ def invite_subscriber():
     subscription = Subscription(priveleges=0)
     subscription.subscriber = invitee
     subscription.community = community
-    g.current_user.invitations.append(subscription)
+    subscription.inviter = g.current_user.username
     db.session.commit()
 
     response = jsonify(community.to_dict())
