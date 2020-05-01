@@ -23,16 +23,16 @@ class Chat(db.Model):
     def from_dict(self, data):
         self.name = data['name']
         self.created_at = datetime.utcnow()
+        self.uuid = uuid.uuid4().hex
 
 
     def to_dict(self):
-        members = [member.username for member in self.members]
         data = {
             'uuid': self.uuid,
             'name': self.name,
             'created_at': self.created_at,
-            'members': members,
-            'community': self.community.name if self.community else None
+            'members': [membership.member.uuid for membership in self.memberships],
+            'community': self.community_uuid if self.community else None
             }
 
         return data

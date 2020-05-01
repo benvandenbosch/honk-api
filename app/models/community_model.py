@@ -29,7 +29,7 @@ class Community(db.Model):
             'created_at': self.created_at,
             'subscribers': [subscription.subscriber.to_public_dict() for subscription in self.subscriptions],
             'admins': admins,
-            'chats': [chat.name for chat in self.chats]
+            'chats': [chat.to_dict() for chat in self.chats]
         }
 
         return data

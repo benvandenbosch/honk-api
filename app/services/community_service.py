@@ -1,4 +1,3 @@
-from flask import jsonify, g
 from app import db
 from app.models.user_model import User
 from app.models.community_model import Community

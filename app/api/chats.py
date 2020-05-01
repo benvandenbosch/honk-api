@@ -6,6 +6,7 @@ from app.models.chat_model import Chat
 from app.models.community_model import Community
 from app import db
 from app.daos import chat_dao, user_dao, community_dao
+from app.services import chat_service
 from app.api.auth import token_auth
 from datetime import datetime
 import uuid
@@ -13,9 +14,8 @@ import uuid
 """
 CREATE A CHAT
 
-ARGUMENTS
- - Chat name (display name for the chat)
- - Members (usernames of other members to be added to the chat)
+PAYLOAD REQUIRED: name, community_uuid (can be blank)
+PAYLOAD OPTIONAL: invite_usernames (list), invite_uuids (list)
 
  RETURN
  - Chat object in json form
@@ -25,32 +25,28 @@ ARGUMENTS
 def create_chat():
     data = request.get_json() or {}
 
-    # TODO: Impose community id validation on chat
-    # Data validation
-    if 'name' not in data or 'members' not in data:
-        return bad_request('must include name, members')
+    if 'name' not in data or 'community_uuid' not in data:
+        return bad_request('must include name, community_uuid')
 
-    chat = Chat(uuid=str(uuid.uuid4()))
+    community = community_dao.get_by_uuid(data['community_uuid'])
+
+    if community and not g.current_user.is_subscribed(community):
+        return unauthorized_resource()
+
+    # Create the chat
+    chat = Chat(community=community)
     chat.from_dict(data)
-    db.session.add(chat)
-    db.session.commit()
 
-     # TODO: Impose community id validation on chat
-    if 'community_name' in data:
-        community = community_dao.get_community_by_name(data['community_name'])
+    # Add the creator to the chat
+    chat_service.create_membership(g.current_user, chat)
 
-        if community is None or not g.current_user.is_subscribed(community):
-            return unauthorized_resource('Community does not exist or user is not subscribed')
-        chat.community = community
+    # Add any other requested users to the chat
+    if 'invite_usernames' in data:
+        chat_service.add_by_username(data['invite_usernames'], chat)
+    if 'invite_uuids' in data:
+        chat_service.add_by_uuid(data['invite_uuids'], chat)
 
-    g.current_user.join_chat(chat)
-    new_members = user_dao.get_users_by_username(data['members'])
-    for mem in new_members:
-        mem.join_chat(chat)
-
-    g.current_user.join_chat(chat)
-    db.session.commit()
-
+    # Create and send the API response
     response = jsonify(chat.to_dict())
     response.status_code = 201
 
@@ -59,8 +55,7 @@ def create_chat():
 """
 ADD A USER TO AN EXISTING CHAT
 
-ARGUMENTS
-- Username of user to add to chat
+PAYLOAD OPTIONAL: invite_usernames (list), invite_uuids (list)
 
 RETURN
 - Chat object in JSON form
@@ -71,15 +66,18 @@ def add_user(chat_uuid):
     data = request.get_json() or {}
     chat = chat_dao.get_chat_by_uuid(chat_uuid)
 
-    if g.current_user not in chat.members:
-        return bad_request('user must be member of chat with given chat id number')
+    # Validations
+    if not chat:
+        resource_not_found()
+    if not g.current_user.is_member(chat):
+        return unauthorized_resource('user must be member of chat with given chat uuid number')
 
-    if 'username' not in data or user_dao.get_user_by_username(data['username']) is None:
-        return bad_request('valid username must be provided')
 
-    new_member = user_dao.get_user_by_username(data['username'])
-    new_member.join_chat(chat)
-    db.session.commit()
+     # Add any requested users to the chat
+    if 'invite_usernames' in data:
+        chat_service.add_by_username(data['invite_usernames'], chat)
+    if 'invite_uuids' in data:
+        chat_service.add_by_uuid(data['invite_uuids'], chat)
 
     response = jsonify(chat.to_dict())
     response.status_code = 201
@@ -96,26 +94,26 @@ ARGUMENTS
 RETURN
 - List of chat objects
 """
-@bp.route('/chats', methods=['GET'])
-@token_auth.login_required
-def get_memberships():
-
-    # Get a list of the user's chats
-    chat_objects = g.current_user.chats
-    chat_list = [chat.to_dict() for chat in chat_objects]
-
-    return jsonify(chat_list)
-
-@bp.route('/chats/<int:uuid>', methods=['GET'])
-@token_auth.login_required
-def get_chat(uuid):
-    chat = chat_dao.get_chat_by_uuid(uuid)
-    if chat is None:
-        return bad_request('not a valid chat uuid')
-    if not g.current_user.is_member(chat):
-        return bad_request('user not authorized for chat')
-
-    response = jsonify(chat.to_dict())
-    response.status_code = 200
-
-    return response
+# @bp.route('/chats', methods=['GET'])
+# @token_auth.login_required
+# def get_memberships():
+#
+#     # Get a list of the user's chats
+#     chat_objects = g.current_user.chats
+#     chat_list = [chat.to_dict() for chat in chat_objects]
+#
+#     return jsonify(chat_list)
+#
+# @bp.route('/chats/<int:uuid>', methods=['GET'])
+# @token_auth.login_required
+# def get_chat(uuid):
+#     chat = chat_dao.get_chat_by_uuid(uuid)
+#     if chat is None:
+#         return bad_request('not a valid chat uuid')
+#     if not g.current_user.is_member(chat):
+#         return bad_request('user not authorized for chat')
+#
+#     response = jsonify(chat.to_dict())
+#     response.status_code = 200
+#
+#     return response
