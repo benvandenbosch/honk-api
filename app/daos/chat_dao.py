@@ -10,6 +10,6 @@ functions
 """
 
 # Get user by id
-def get_chat_by_uuid(uuid):
-    chat = Chat.query.filter_by(uuid=uuid).first()
+def get_chat_by_uuid(chat_uuid):
+    chat = Chat.query.filter_by(uuid=chat_uuid).first()
     return chat

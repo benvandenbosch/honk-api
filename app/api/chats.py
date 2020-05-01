@@ -52,6 +52,7 @@ def create_chat():
 
     return response
 
+
 """
 ADD A USER TO AN EXISTING CHAT
 
@@ -86,34 +87,38 @@ def add_user(chat_uuid):
 
 
 """
-LIST ALL CHATS A USER IS A MEMBER OF
+List all chats the user is a member of
 
-ARGUMENTS
-- None
+URL PARAMETER: None
 
-RETURN
-- List of chat objects
+RETURN: List of chat objects
 """
-# @bp.route('/chats', methods=['GET'])
-# @token_auth.login_required
-# def get_memberships():
-#
-#     # Get a list of the user's chats
-#     chat_objects = g.current_user.chats
-#     chat_list = [chat.to_dict() for chat in chat_objects]
-#
-#     return jsonify(chat_list)
-#
-# @bp.route('/chats/<int:uuid>', methods=['GET'])
-# @token_auth.login_required
-# def get_chat(uuid):
-#     chat = chat_dao.get_chat_by_uuid(uuid)
-#     if chat is None:
-#         return bad_request('not a valid chat uuid')
-#     if not g.current_user.is_member(chat):
-#         return bad_request('user not authorized for chat')
-#
-#     response = jsonify(chat.to_dict())
-#     response.status_code = 200
-#
-#     return response
+@bp.route('/chats', methods=['GET'])
+@token_auth.login_required
+def list_chats():
+
+    # Get a list of the user's chats
+    chats = [membership.chat.to_dict() for membership in g.current_user.memberships]
+    return jsonify(chats)
+
+
+"""
+Get a specific chat by uuid
+
+URL PARAMETER: chat_uuid
+
+RETURN: Chat object
+"""
+@bp.route('/chats/<chat_uuid>', methods=['GET'])
+@token_auth.login_required
+def get_chat(chat_uuid):
+    chat = chat_dao.get_chat_by_uuid(chat_uuid)
+    if chat is None:
+        return bad_request('not a valid chat uuid')
+    if not g.current_user.is_member(chat):
+        return unauthorized_resource('user not authorized for chat')
+
+    response = jsonify(chat.to_dict())
+    response.status_code = 200
+
+    return response
