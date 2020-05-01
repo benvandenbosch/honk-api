@@ -5,14 +5,6 @@ from flask_login import UserMixin
 import base64, os
 import uuid
 
-
-# Association between chat and the users that are members of it
-memberships = db.Table(
-    'memberships',
-    db.Column('member_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('chat_id', db.Integer, db.ForeignKey('chat.id'))
-)
-
 ######################
 # Classes            *
 ######################
@@ -30,15 +22,13 @@ class User(UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
     apns = db.Column(db.String(200))
 
-    # Many to many relationship using the memberships association table
-    chats = db.relationship(
-        'Chat', secondary=memberships, backref='members', lazy='dynamic'
-    )
-
-    # One to many relationship with messages table
+    memberships = db.relationship('Membership', back_populates='member', lazy='dynamic')
     messages = db.relationship('Message', backref='author', lazy='dynamic')
-
     subscriptions = db.relationship('Subscription', back_populates="subscriber", lazy='dynamic')
+    message_deliveries = db.relationship('MessageDelivery', back_populates='recipient', lazy='dynamic')
+    reaction_deliveries = db.relationship('ReactionDelivery', back_populates='recipient', lazy='dynamic')
+    reactions = db.relationship('Reaction', backref='reactor', lazy='dynamic')
+
 
     # Tell Python how to print objects of this class
     def __repr__(self):
