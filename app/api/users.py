@@ -31,9 +31,11 @@ def get_user(user_uuid):
     else:
         response = jsonify(requested_user.to_public_dict())
 
-
+    # Send the response
     response.status_code = 200
     return response
+
+
 """
 Create a user
 
@@ -63,6 +65,7 @@ def create_user():
     response.status_code = 201
 
     return response
+
 
 """
 Update a user

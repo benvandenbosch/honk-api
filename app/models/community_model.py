@@ -21,13 +21,13 @@ class Community(db.Model):
         admins = []
         for subscription in self.subscriptions:
             if subscription.priveleges == 1:
-                admins.append(subscription.subscriber.username)
+                admins.append(subscription.subscriber.uuid)
         data = {
-            'id': self.id,
+            'uuid': self.uuid,
             'name': self.name,
             'description': self.description,
             'created_at': self.created_at,
-            'subscribers': [subscription.subscriber.username for subscription in self.subscriptions],
+            'subscribers': [subscription.subscriber.to_public_dict() for subscription in self.subscriptions],
             'admins': admins,
             'chats': [chat.name for chat in self.chats]
         }
@@ -37,3 +37,4 @@ class Community(db.Model):
     def from_dict(self, data):
         self.name = data['name']
         self.description = data['description']
+        self.uuid = uuid.uuid4().hex

@@ -15,3 +15,15 @@ def get_community_by_name(name):
 
 def is_community(name):
     return Community.query.filter_by(name=name).count() > 0
+
+"""
+Return a list of community objects given list of uuids
+"""
+def list_by_uuid(uuids):
+    return Community.query.filter(Community.uuid.in_(uuids)).all()
+
+"""
+Returns a single community by uuid
+"""
+def get_by_uuid(uuid):
+    return Community.query.filter_by(uuid=uuid).first()
