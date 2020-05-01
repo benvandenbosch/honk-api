@@ -12,7 +12,7 @@ class Reaction(db.Model):
     uuid = db.Column(db.String(36), index=True, unique=True)
 
     # Foreign keys with Message & User tables
-    author_uuid = db.Column(db.String(32)), db.ForeignKey('user.uuid')
+    author_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'))
     message_uuid = db.Column(db.String(32), db.ForeignKey('message.uuid'))
 
     # Record the type of reaction

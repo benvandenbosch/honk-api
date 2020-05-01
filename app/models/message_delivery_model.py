@@ -19,4 +19,4 @@ class MessageDelivery(db.Model):
     recipient = db.relationship("User", back_populates="message_deliveries")
 
     # Relationship with message
-    message = db.relatinoship("Message", back_populates="deliveries")
+    message = db.relationship("Message", back_populates="deliveries")

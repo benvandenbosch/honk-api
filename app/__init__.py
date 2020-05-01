@@ -47,3 +47,7 @@ from app.models.message_model import Message
 from app.models.chat_model import Chat
 from app.models.community_model import Community
 from app.models.subscription_model import Subscription
+from app.models.membership_model import Membership
+from app.models.message_delivery_model import MessageDelivery
+from app.models.reaction_model import Reaction
+from app.models.reaction_delivery_model import ReactionDelivery

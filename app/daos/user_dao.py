@@ -27,3 +27,7 @@ def get_users_by_username(usernames):
 # Return whether or not a provided username is valid (whether a user by that username exists)
 def is_user(username):
     return User.query.filter_by(username=username).count() > 0
+
+# Get user by UUID
+def get_by_uuid(user_uuid):
+    return User.query.filter_by(uuid=user_uuid).first()

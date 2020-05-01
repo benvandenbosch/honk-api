@@ -15,5 +15,8 @@ def bad_request(message):
 def duplicate_resource_error(message):
     return error_response(409, message)
 
-def unauthorized_resource(message):
+def unauthorized_resource(message='You do not have authorization to access this resource'):
     return  error_response(401, message)
+
+def resource_not_found(message='Requested resource not found'):
+    return error_response(404, message)

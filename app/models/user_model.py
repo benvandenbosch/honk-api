@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
 
     # Id & UUID
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
     # User profile
     username = db.Column(db.String(64), index=True, unique=True)
@@ -76,7 +76,7 @@ class User(UserMixin, db.Model):
         return self.subscriptions.filter_by(community_uuid=community.uuid, is_active=1).count() > 0
 
     def update(self, data):
-        for field in ['email', 'apns', 'display_name', 'biography']:
+        for field in ['apns', 'display_name', 'biography']:
             if field in data:
                 setattr(self, field, data[field])
 
@@ -86,6 +86,8 @@ class User(UserMixin, db.Model):
         if user is None or user.token_expiration < datetime.utcnow():
             return None
         return user
+
+
 
     # Represent as a JSON object
     def to_dict(self):
@@ -103,6 +105,17 @@ class User(UserMixin, db.Model):
 
         return data
 
+    # Return a dictionary of info that other users can see
+    def to_public_dict(self):
+        data = {
+            'uuid': self.uuid,
+            'username': self.username,
+            'display_name': self.display_name,
+            'biography': self.biography,
+            'created_at': self.created_at
+        }
+        return data
+
     # Convert from JSON object to Python object
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'display_name', 'biography', 'apns']:
@@ -110,3 +123,4 @@ class User(UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+        self.uuid = uuid.uuid4().hex
