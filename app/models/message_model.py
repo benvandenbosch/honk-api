@@ -3,15 +3,24 @@ from datetime import datetime, timedelta
 import uuid
 
 class Message(db.Model):
+
+    # ID & UUID
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), index=True, unique=True)
+
+    # Foreign keys for User & Chat tables
+    author_uuid  = db.Column(db.String(32), db.ForeignKey('user.uuid'))
+    chat_uuid = db.Column(db.String(32), db.ForeignKey('chat.uuid'))
+
+    # Message attributes
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     content = db.Column(db.String(140))
-    author_uuid  = db.Column(db.Integer, db.ForeignKey('user.uuid'))
-    chat_uuid = db.Column(db.Integer, db.ForeignKey('chat.uuid'))
 
+    # Relationships
     deliveries = db.relationship('MessageDelivery', back_populates='message', lazy='dynamic')
     reactions = db.relationship('Reaction', backref='message', lazy='dynamic')
+
+    
     def __repr__(self):
         return('<Message {}>'.format(self.content))
 

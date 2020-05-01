@@ -13,15 +13,27 @@ import uuid
 
 
 class User(UserMixin, db.Model):
+
+    # Id & UUID
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), index=True, unique=True)
+
+    # User profile
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), unique=True)
+    display_name = db.Column(db.String(64))
+    biography = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Authentication
     password_hash = db.Column(db.String(128))
     token = db.Column(db.String(32), unique = True)
     token_expiration = db.Column(db.DateTime)
+
+    # User Notification
     apns = db.Column(db.String(200))
 
+    # Relationships
     memberships = db.relationship('Membership', back_populates='member', lazy='dynamic')
     messages = db.relationship('Message', backref='author', lazy='dynamic')
     subscriptions = db.relationship('Subscription', back_populates="subscriber", lazy='dynamic')
@@ -61,10 +73,10 @@ class User(UserMixin, db.Model):
             self.chats.append(chat)
 
     def is_subscribed(self, community):
-        return self.subscriptions.filter_by(community_id=community.id, is_active=1).count() > 0
+        return self.subscriptions.filter_by(community_uuid=community.uuid, is_active=1).count() > 0
 
     def update(self, data):
-        for field in ['email', 'apns']:
+        for field in ['email', 'apns', 'display_name', 'biography']:
             if field in data:
                 setattr(self, field, data[field])
 
@@ -81,6 +93,11 @@ class User(UserMixin, db.Model):
             'uuid': self.uuid,
             'username': self.username,
             'email': self.email,
+            'display_name': self.display_name,
+            'biography': self.biography,
+            'created_at': self.created_at,
+            'communities': [subscription.community.uuid for subscription in self.subscriptions],
+            'chats': [membership.chat.uuid for membership in self.memberships],
             'apns': self.apns
         }
 
@@ -88,10 +105,8 @@ class User(UserMixin, db.Model):
 
     # Convert from JSON object to Python object
     def from_dict(self, data, new_user=False):
-        for field in ['username', 'email']:
+        for field in ['username', 'email', 'display_name', 'biography', 'apns']:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
-        if 'apns' in data:
-            self.apns = data['apns']

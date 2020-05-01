@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 68031a270d90
+Revision ID: cc79273875cd
 Revises: 
-Create Date: 2020-04-30 19:44:58.211926
+Create Date: 2020-04-30 20:04:30.150031
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '68031a270d90'
+revision = 'cc79273875cd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,9 @@ def upgrade():
     sa.Column('uuid', sa.String(length=36), nullable=True),
     sa.Column('username', sa.String(length=64), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
+    sa.Column('display_name', sa.String(length=64), nullable=True),
+    sa.Column('biography', sa.String(length=200), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('token', sa.String(length=32), nullable=True),
     sa.Column('token_expiration', sa.DateTime(), nullable=True),
@@ -68,10 +71,10 @@ def upgrade():
     op.create_table('message',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=True),
+    sa.Column('author_uuid', sa.String(length=32), nullable=True),
+    sa.Column('chat_uuid', sa.String(length=32), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('content', sa.String(length=140), nullable=True),
-    sa.Column('author_uuid', sa.Integer(), nullable=True),
-    sa.Column('chat_uuid', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['author_uuid'], ['user.uuid'], ),
     sa.ForeignKeyConstraint(['chat_uuid'], ['chat.uuid'], ),
     sa.PrimaryKeyConstraint('id')
