@@ -16,7 +16,7 @@ class Reaction(db.Model):
     uuid = db.Column(db.String(36), index=True, unique=True)
 
     # Foreign keys with Message & User tables
-    author_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'))
+    reactor_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'))
     message_uuid = db.Column(db.String(32), db.ForeignKey('message.uuid'))
 
     # Record the type of reaction
@@ -48,8 +48,8 @@ class Reaction(db.Model):
     def to_dict(self):
         data = {
             'uuid': self.uuid,
-            # 'author': self.reactor.username,
-            'author_uuid': self.author_uuid,
+            'reactor': self.reactor.username,
+            'reactor_uuid': self.reactor_uuid,
             'reaction_type': self.reaction_type,
             'deliveries': [delivery.to_dict() for delivery in self.deliveries]
         }

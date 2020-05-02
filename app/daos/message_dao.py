@@ -27,5 +27,5 @@ def get_reaction_delivery(user_uuid, reaction_uuid):
 """
 Get reaction by reaction uuid
 """
-def get_reaction_by_uuid(reation_uuid):
-    return Reaction.query.filter_by(uuid=reaction_uuid).all()
+def get_reaction_by_uuid(reaction_uuid):
+    return Reaction.query.filter_by(uuid=reaction_uuid).first()

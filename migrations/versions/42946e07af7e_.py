@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 329a56cdadd2
+Revision ID: 42946e07af7e
 Revises: 
-Create Date: 2020-04-30 20:28:30.860679
+Create Date: 2020-05-01 20:12:13.399519
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '329a56cdadd2'
+revision = '42946e07af7e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,7 +30,7 @@ def upgrade():
     op.create_index(op.f('ix_community_uuid'), 'community', ['uuid'], unique=True)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('uuid', sa.String(length=36), nullable=True),
+    sa.Column('uuid', sa.String(length=32), nullable=True),
     sa.Column('username', sa.String(length=64), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('display_name', sa.String(length=64), nullable=True),
@@ -103,11 +103,11 @@ def upgrade():
     op.create_table('reaction',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=True),
-    sa.Column('author_uuid', sa.String(length=32), nullable=True),
+    sa.Column('reactor_uuid', sa.String(length=32), nullable=True),
     sa.Column('message_uuid', sa.String(length=32), nullable=True),
     sa.Column('reaction_type', sa.String(length=20), nullable=True),
-    sa.ForeignKeyConstraint(['author_uuid'], ['user.uuid'], ),
     sa.ForeignKeyConstraint(['message_uuid'], ['message.uuid'], ),
+    sa.ForeignKeyConstraint(['reactor_uuid'], ['user.uuid'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_reaction_uuid'), 'reaction', ['uuid'], unique=True)

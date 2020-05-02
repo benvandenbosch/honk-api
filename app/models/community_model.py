@@ -21,7 +21,7 @@ class Community(db.Model):
         admins = []
         for subscription in self.subscriptions:
             if subscription.priveleges == 1:
-                admins.append(subscription.subscriber.uuid)
+                admins.append(subscription.subscriber.to_public_dict())
         data = {
             'uuid': self.uuid,
             'name': self.name,

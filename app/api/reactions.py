@@ -1,6 +1,6 @@
 from app.api import bp
 from flask import jsonify, request, url_for, g
-from app.api.errors import bad_request
+from app.api.errors import bad_request, resource_not_found, unauthorized_resource
 from app.models.user_model import User
 from app.models.chat_model import Chat
 from app.models.message_model import Message
@@ -29,7 +29,6 @@ def add_reaction(message_uuid):
     data = request.get_json() or {}
     message = message_dao.get_by_uuid(message_uuid)
 
-    print('hi')
     # Validation
     if not data['reaction_type'] or data['reaction_type'] not in ['like']:
         bad_request('Must provide a valid reaction type')
@@ -60,7 +59,7 @@ URL PARAMETERS: message_uuid
 
 Return: Updated message object
 """
-@bp.route('/messages/reactions/<reaction_uuid>', methods=['PUT'])
+@bp.route('/messages/reactions/<reaction_uuid>/delivered', methods=['PUT'])
 @token_auth.login_required
 def confirm_reaction_delivery(reaction_uuid):
 
@@ -78,7 +77,7 @@ def confirm_reaction_delivery(reaction_uuid):
     delivery.is_delivered = True
     db.session.commit()
 
-    response = jsonify(message.to_dict())
+    response = jsonify(reaction.message.to_dict())
     response.status_code = 201
 
     return response
