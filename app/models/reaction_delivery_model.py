@@ -20,3 +20,15 @@ class ReactionDelivery(db.Model):
 
     # Relationship with reaction
     reaction = db.relationship("Reaction", back_populates="deliveries")
+
+    def __repr__(self):
+        return('<ReactionDelivery {}>'.format(self.content))
+
+    def to_dict(self):
+        data = {
+            'recipient_uuid': self.recipient_uuid,
+            'recipient_username': self.recipient.username,
+            'is_delivered': self.is_delivered
+        }
+
+        return data

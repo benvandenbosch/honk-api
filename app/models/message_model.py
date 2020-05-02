@@ -54,7 +54,8 @@ class Message(db.Model):
             'author_uuid': self.author_uuid,
             'created_at': self.created_at,
             'content': self.content,
-            'deliveries': [delivery.to_dict() for delivery in self.deliveries]
+            'deliveries': [delivery.to_dict() for delivery in self.deliveries],
+            'reactions': [reaction.to_dict() for reaction in self.reactions]
         }
 
         return data

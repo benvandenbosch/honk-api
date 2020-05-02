@@ -28,8 +28,6 @@ class MessageDelivery(db.Model):
         data = {
             'recipient_uuid': self.recipient_uuid,
             'recipient_username': self.recipient.username,
-            'sender_uuid': self.message.author_uuid,
-            'sender_username': self.message.author.username,
             'is_delivered': self.is_delivered,
         }
 
