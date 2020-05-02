@@ -1,6 +1,9 @@
 from app import db
 from datetime import datetime, timedelta
 import uuid
+from app.daos import chat_dao
+from flask import g
+from app.models.message_delivery_model import MessageDelivery
 
 class Message(db.Model):
 
@@ -20,12 +23,28 @@ class Message(db.Model):
     deliveries = db.relationship('MessageDelivery', back_populates='message', lazy='dynamic')
     reactions = db.relationship('Reaction', backref='message', lazy='dynamic')
 
-    
+
     def __repr__(self):
         return('<Message {}>'.format(self.content))
 
     def from_dict(self, data):
+        self.uuid = uuid.uuid4().hex
         self.content = data['content']
+        self.created_at = datetime.utcnow()
+        self.chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
+        self.author = g.current_user
+
+        # Create message delivery objects for each recipient
+        for membership in self.chat.memberships:
+            member = membership.member
+            # Default is_delivered should be false
+            is_delivered = True if member == g.current_user else False
+            delivery = MessageDelivery(
+                recipient = member,
+                message = self,
+                is_delivered = is_delivered
+            )
+            self.deliveries.append(delivery)
 
     def to_dict(self):
         data = {

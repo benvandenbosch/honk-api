@@ -15,12 +15,9 @@ import os, uuid
 """
 SEND A MESSAGE
 
-ARGUMENTS
- - Chat id
- - Message content
+PAYLOAD REQUIRED: chat_uuid, content
 
- RETURN
- - Message object in json form
+ RETURN: Message object in json form
 """
 @bp.route('/messages', methods=['POST'])
 @token_auth.login_required
@@ -33,16 +30,18 @@ def send_message():
 
     chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
 
-    if g.current_user not in chat.members:
+    if not g.current_user.is_member(chat):
         return bad_request('Must provide chat uuid for chat user is a member of')
 
-    message = Message(uuid=str(uuid.uuid4()))
+    message = Message()
     message.from_dict(data)
-    message.author = g.current_user
-    message.chat = chat
-    db.session.add(message)
     db.session.commit()
-    db.session.refresh(message)
+
+    # message.author = g.current_user
+    # message.chat = chat
+    # db.session.add(message)
+    # db.session.commit()
+    # db.session.refresh(message)
 
     response = jsonify(message.to_dict())
     response.status_code = 201
