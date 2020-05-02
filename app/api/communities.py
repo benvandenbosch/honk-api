@@ -97,3 +97,26 @@ def list_member_chats(community_uuid):
     response.status_code = 201
 
     return response
+
+"""
+Get a community by uuid
+
+URL PARAMETERS: community_uuid
+
+Return: Community object
+"""
+@bp.route('/communities/<community_uuid>', methods=['GET'])
+@token_auth.login_required
+def get_community(community_uuid):
+    community = community_dao.get_by_uuid(community_uuid)
+
+    # Validations
+    if not community:
+        resource_not_found()
+    if not g.current_user.is_subscribed(community):
+        unauthorized_resource()
+
+    response = jsonify(community.to_dict())
+    response.status_code = 200
+
+    return response
