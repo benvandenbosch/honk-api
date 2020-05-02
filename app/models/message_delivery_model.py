@@ -20,3 +20,17 @@ class MessageDelivery(db.Model):
 
     # Relationship with message
     message = db.relationship("Message", back_populates="deliveries")
+
+    def __repr__(self):
+        return('<MessageDelivery {}>'.format(self.content))
+
+    def to_dict(self):
+        data = {
+            'recipient_uuid': self.recipient_uuid,
+            'recipient_username': self.recipient.username,
+            'sender_uuid': self.message.author_uuid,
+            'sender_username': self.message.author.username,
+            'is_delivered': self.is_delivered,
+        }
+
+        return data

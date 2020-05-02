@@ -51,8 +51,10 @@ class Message(db.Model):
             'uuid': self.uuid,
             'chat': self.chat.name,
             'author': self.author.username,
+            'author_uuid': self.author_uuid,
             'created_at': self.created_at,
-            'content': self.content
+            'content': self.content,
+            'deliveries': [delivery.to_dict() for delivery in self.deliveries]
         }
 
         return data

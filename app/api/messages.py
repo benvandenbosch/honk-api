@@ -37,12 +37,6 @@ def send_message():
     message.from_dict(data)
     db.session.commit()
 
-    # message.author = g.current_user
-    # message.chat = chat
-    # db.session.add(message)
-    # db.session.commit()
-    # db.session.refresh(message)
-
     response = jsonify(message.to_dict())
     response.status_code = 201
 
