@@ -5,7 +5,7 @@ from app.models.user_model import User
 from app.models.chat_model import Chat
 from app.models.message_model import Message
 from app import db
-from app.daos import chat_dao, user_dao
+from app.daos import chat_dao, user_dao, message_dao
 from app.api.auth import token_auth
 from datetime import datetime
 from sqlalchemy import desc
@@ -33,47 +33,47 @@ def send_message():
     if not g.current_user.is_member(chat):
         return bad_request('Must provide chat uuid for chat user is a member of')
 
+    # Create the message
     message = Message()
     message.from_dict(data)
     db.session.commit()
 
-    response = jsonify(message.to_dict())
-    response.status_code = 201
-
+    # Call the notification service
     if os.environ.get('ENV_NAME') == 'PROD':
         notification_service.deliver_message_notification(sender=g.current_user,chat=chat)
 
-    return response
-
-"""
-Get all messages for a user by chat id
-
-"""
-@bp.route('/messages/<chat_uuid>', methods=['GET'])
-@token_auth.login_required
-def get_chat_messages(chat_uuid):
-    chat = chat_dao.get_chat_by_uuid(chat_uuid)
-
-    if g.current_user not in chat.members:
-        return bad_request('user must be member of chat with given chat uuid number')
-
-    messages = Message.query.filter_by(chat_uuid=chat_uuid).order_by(desc(Message.created_at)).all()
-
-    response = jsonify([message.to_dict() for message in messages])
-    response.status_code = 200
+    # Formulate and send the response
+    response = jsonify(message.to_dict())
+    response.status_code = 201
 
     return response
 
 """
-Get all messages for a user regardless of chat
+Confirm that a message has been delivered
+
+URL PARAMETERS: message_uuid
+
+Return: Updated message object
 """
-@bp.route('/messages', methods=['GET'])
+@bp.route('/messages/<message_uuid>/delivered', methods=['PUT'])
 @token_auth.login_required
-def get_messages():
-    # Get all the ids for chats the user is a part
-    chat_ids = [chat.id for chat in g.current_user.chats]
-    messages = Message.query.filter(Message.chat_id.in_(chat_ids)).order_by(desc(Message.created_at)).all()
-    response = jsonify([message.to_dict() for message in messages])
-    response.status_code = 200
+def confirm_delivery(message_uuid):
+
+    # Get the message delivery
+    delivery = message_dao.get_message_delivery(g.current_user.uuid, message_uuid)
+    message = message_dao.get_by_uuid(message_uuid)
+
+    # Validations
+    if not message:
+        resource_not_found()
+    if not g.current_user.is_member(message.chat):
+        unauthorized_resource()
+
+    # Update message delivery status to delivered
+    delivery.is_delivered = True
+    db.session.commit()
+
+    response = jsonify(message.to_dict())
+    response.status_code = 201
 
     return response
