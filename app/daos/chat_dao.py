@@ -1,5 +1,6 @@
 from flask import jsonify, g
 from app.models.chat_model import Chat
+from app.models.membership_model import Membership
 from app import db
 
 """

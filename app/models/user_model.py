@@ -66,6 +66,7 @@ class User(UserMixin, db.Model):
         self.token_expiration = datetime.utcnow() - timedelta(hours=1)
 
     def is_member(self, chat):
+        print('is member')
         return self.memberships.filter_by(chat_uuid=chat.uuid).count() > 0
 
     def join_chat(self, chat):

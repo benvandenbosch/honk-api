@@ -4,7 +4,7 @@ from app.api.errors import bad_request, duplicate_resource_error, unauthorized_r
 from app.models.user_model import User
 from app.models.community_model import Community
 from app.models.subscription_model import Subscription
-from app.daos import community_dao, user_dao
+from app.daos import community_dao, user_dao, chat_dao
 from app import db
 from app.api.auth import token_auth
 from app.services import community_service
@@ -66,6 +66,34 @@ def invite_subscriber(community_uuid):
         community_service.add_by_uuid(data['invite_uuids'], community)
 
     response = jsonify(community.to_dict())
+    response.status_code = 201
+
+    return response
+
+"""
+Get all chat objects that pertain to a community that the user is a member of
+
+URL PARAMETERS: community_uuid
+
+Return: List of chat objects
+"""
+@bp.route('/communities/<community_uuid>/member_chats', methods=['GET'])
+@token_auth.login_required
+def list_member_chats(community_uuid):
+    community = community_dao.get_by_uuid(community_uuid)
+
+    # Validations
+    if not community:
+        resource_not_found()
+    if not g.current_user.is_subscribed(community):
+        unauthorized_resource()
+
+    for membership in g.current_user.memberships:
+        if membership.chat.community == community:
+            chats.append(membership.chat.to_dict())
+
+    response = jsonify(chats)
+
     response.status_code = 201
 
     return response
