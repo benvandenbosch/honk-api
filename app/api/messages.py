@@ -9,7 +9,7 @@ from app.daos import chat_dao, user_dao, message_dao
 from app.api.auth import token_auth
 from datetime import datetime
 from sqlalchemy import desc
-from app.services import notification_service
+from app.services import notification_service, message_service
 import os, uuid
 
 """
@@ -34,8 +34,9 @@ def send_message():
         return bad_request('Must provide chat uuid for chat user is a member of')
 
     # Create the message
-    message = Message()
+    message = Message(author_uuid=g.current_user.uuid, chat_uuid=chat.uuid)
     message.from_dict(data)
+    message_service.create_deliveries(g.current_user, message, chat)
     db.session.commit()
 
     # Call the notification service

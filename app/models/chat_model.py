@@ -6,11 +6,12 @@ import uuid
 class Chat(db.Model):
 
     # ID & UUID
-    id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
-    # Foreign key for parent community
-    community_uuid = db.Column(db.Integer, db.ForeignKey('community.uuid'))
+    # Foreign key for parent community and foreign uuid
+    community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
+    community_uuid = db.Column(db.String(32))
 
     # Chat profile
     name = db.Column(db.String(100))

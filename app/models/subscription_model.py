@@ -7,9 +7,14 @@ they subscribe to. Many to many relationship.
 """
 class Subscription(db.Model):
 
-    # Foreign keys (User & Community UUIDs)
-    user_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'), primary_key=True)
-    community_uuid = db.Column(db.String(32), db.ForeignKey('community.uuid'), primary_key=True)
+    # ID
+    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+
+    # Foreign keys and foreign uuids
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
+    user_uuid = db.Column(db.String(32))
+    community_uuid = db.Column(db.String(32))
 
     # Track user priveleges (0 = standard user, 1 = admin)
     priveleges = db.Column(db.Integer, default=0)

@@ -8,9 +8,14 @@ is a many to many table.
 
 class MessageDelivery(db.Model):
 
+    # ID
+    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+
     # Foreign keys with User and Message tables
-    recipient_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'), primary_key=True)
-    message_uuid = db.Column(db.String(32), db.ForeignKey('message.uuid'), primary_key=True)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+    recipient_uuid = db.Column(db.String(32))
+    message_uuid = db.Column(db.String(32))
 
     # Track whether the message has been successfully delivered
     is_delivered = db.Column(db.Boolean, default=False)

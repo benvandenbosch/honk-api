@@ -49,6 +49,8 @@ def create_subscription(user, community, priveleges=0):
         is_active = True,
         subscriber = user,
         community = community,
-        created_at = datetime.utcnow()
+        created_at = datetime.utcnow(),
+        community_uuid = community.uuid,
+        user_uuid = user.uuid
     )
     db.session.commit()

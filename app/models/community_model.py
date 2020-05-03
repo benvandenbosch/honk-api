@@ -5,8 +5,8 @@ import uuid
 class Community(db.Model):
 
     # ID & UUID
-    id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
     # Community profile
     name = db.Column(db.String(100), index=True, unique=True)

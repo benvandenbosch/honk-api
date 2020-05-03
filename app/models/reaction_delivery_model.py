@@ -8,9 +8,14 @@ is a many to many table.
 
 class ReactionDelivery(db.Model):
 
-    # Foreign keys with User and Reaction tables
-    recipient_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'), primary_key=True)
-    reaction_uuid = db.Column(db.String(32), db.ForeignKey('reaction.uuid'), primary_key=True)
+    # ID
+    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+
+    # Foreign keys and uuids with User and Reaction tables
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    reaction_id = db.Column(db.Integer, db.ForeignKey('reaction.id'))
+    recipient_uuid = db.Column(db.String(32))
+    reaction_uuid = db.Column(db.String(32))
 
     # Track whether reaction has been successfully delivered
     is_delivered = db.Column(db.Boolean, default=False)

@@ -15,7 +15,7 @@ import uuid
 class User(UserMixin, db.Model):
 
     # Id & UUID
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
     uuid = db.Column(db.String(32), index=True, unique=True)
 
     # User profile

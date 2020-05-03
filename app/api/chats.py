@@ -34,7 +34,7 @@ def create_chat():
         return unauthorized_resource()
 
     # Create the chat
-    chat = Chat(community=community)
+    chat = Chat(community=community, community_uuid=community.uuid)
     chat.from_dict(data)
 
     # Add the creator to the chat

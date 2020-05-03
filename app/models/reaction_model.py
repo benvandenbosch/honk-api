@@ -12,12 +12,14 @@ This table describes a reaction.
 class Reaction(db.Model):
 
     # ID and UUID within Reaction table
-    id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
-    # Foreign keys with Message & User tables
-    reactor_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'))
-    message_uuid = db.Column(db.String(32), db.ForeignKey('message.uuid'))
+    # Foreign keys and foreign uuids with Message & User tables
+    reactor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+    reactor_uuid = db.Column(db.String(32))
+    message_uuid = db.Column(db.String(32))
 
     # Record the type of reaction
     reaction_type = db.Column(db.String(20), default="like")
@@ -29,10 +31,13 @@ class Reaction(db.Model):
         return('<Reaction {}>'.format(self.content))
 
     def from_dict(self, data):
+        message = Message.query.filter_by(uuid=data['message_uuid']).first()
         self.uuid = uuid.uuid4().hex
         self.reaction_type = data['reaction_type']
         self.reactor = g.current_user
-        self.message = Message.query.filter_by(uuid=data['message_uuid']).first()
+        self.message = message
+        self.reactor_uuid = g.current_user.uuid
+        self.message_uuid = message.uuid
 
         # Create a reaction delivery object for each recipient
         for membership in self.message.chat.memberships:
@@ -41,7 +46,9 @@ class Reaction(db.Model):
             delivery = ReactionDelivery(
                 recipient = member,
                 reaction = self,
-                is_delivered = is_delivered
+                is_delivered = is_delivered,
+                recipient_uuid = member.uuid,
+                reaction_uuid = self.uuid
             )
             self.deliveries.append(delivery)
 

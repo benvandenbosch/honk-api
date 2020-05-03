@@ -8,12 +8,14 @@ from app.models.message_delivery_model import MessageDelivery
 class Message(db.Model):
 
     # ID & UUID
-    id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(36), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
-    # Foreign keys for User & Chat tables
-    author_uuid  = db.Column(db.String(32), db.ForeignKey('user.uuid'))
-    chat_uuid = db.Column(db.String(32), db.ForeignKey('chat.uuid'))
+    # Foreign keys and uuids for User & Chat tables
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
+    author_uuid  = db.Column(db.String(32))
+    chat_uuid = db.Column(db.String(32))
 
     # Message attributes
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -27,6 +29,7 @@ class Message(db.Model):
     def __repr__(self):
         return('<Message {}>'.format(self.content))
 
+
     def from_dict(self, data):
         self.uuid = uuid.uuid4().hex
         self.content = data['content']
@@ -34,17 +37,6 @@ class Message(db.Model):
         self.chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
         self.author = g.current_user
 
-        # Create message delivery objects for each recipient
-        for membership in self.chat.memberships:
-            member = membership.member
-            # Default is_delivered should be false
-            is_delivered = True if member == g.current_user else False
-            delivery = MessageDelivery(
-                recipient = member,
-                message = self,
-                is_delivered = is_delivered
-            )
-            self.deliveries.append(delivery)
 
     def to_dict(self):
         data = {

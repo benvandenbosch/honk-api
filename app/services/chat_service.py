@@ -58,6 +58,8 @@ def create_membership(user, chat):
         member = user,
         chat = chat,
         created_at = datetime.utcnow(),
-        is_active = True
+        is_active = True,
+        user_uuid = user.uuid,
+        chat_uuid = chat.uuid
     )
     db.session.commit()

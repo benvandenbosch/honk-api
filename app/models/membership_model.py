@@ -8,9 +8,14 @@ It is a many to many relationship
 
 class Membership(db.Model):
 
-    # Foreign keys (User & Chat UUIDs)
-    user_uuid = db.Column(db.String(32), db.ForeignKey('user.uuid'), primary_key=True)
-    chat_uuid = db.Column(db.String(32), db.ForeignKey('chat.uuid'), primary_key=True)
+    # ID
+    id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
+
+    # Foreign keys and uuids for User and Chat tables
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
+    user_uuid = db.Column(db.String(32))
+    chat_uuid = db.Column(db.String(32))
 
     # Track validity timeframes of this Membership
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
