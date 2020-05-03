@@ -27,3 +27,10 @@ Returns a single community by uuid
 """
 def get_by_uuid(uuid):
     return Community.query.filter_by(uuid=uuid).first()
+
+"""
+Get all communities a user is subscribed to
+"""
+def list_by_user(user):
+    communities = [subscription.community for subscription in user.subscriptions]
+    return communities

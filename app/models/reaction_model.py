@@ -48,7 +48,8 @@ class Reaction(db.Model):
                 reaction = self,
                 is_delivered = is_delivered,
                 recipient_uuid = member.uuid,
-                reaction_uuid = self.uuid
+                reaction_uuid = self.uuid,
+                uuid = uuid.uuid4().hex
             )
             self.deliveries.append(delivery)
 

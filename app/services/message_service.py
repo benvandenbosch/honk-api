@@ -4,6 +4,7 @@ from app.models.user_model import User
 from app.models.message_model import Message
 from app.daos import user_dao
 from app.models.message_delivery_model import MessageDelivery
+import uuid
 
 
 """
@@ -23,6 +24,7 @@ def create_deliveries(sender, message, chat):
             message = message,
             is_delivered = is_delivered,
             recipient_uuid = member.uuid,
-            message_uuid = message.uuid
+            message_uuid = message.uuid,
+            uuid = uuid.uuid4().hex
         )
         message.deliveries.append(delivery)

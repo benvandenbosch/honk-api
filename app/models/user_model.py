@@ -66,7 +66,6 @@ class User(UserMixin, db.Model):
         self.token_expiration = datetime.utcnow() - timedelta(hours=1)
 
     def is_member(self, chat):
-        print('is member')
         return self.memberships.filter_by(chat_uuid=chat.uuid).count() > 0
 
     def join_chat(self, chat):
@@ -88,7 +87,7 @@ class User(UserMixin, db.Model):
             return None
         return user
 
-    # Represent as a JSON object
+    # Represent as a JSON object with child relationships
     def to_dict(self):
         data = {
             'uuid': self.uuid,
@@ -100,6 +99,19 @@ class User(UserMixin, db.Model):
             'communities': [subscription.community.uuid for subscription in self.subscriptions],
             'chats': [membership.chat.to_dict() for membership in self.memberships],
             'apns': self.apns
+        }
+
+        return data
+
+    # Represent as a JSON object without child relationships
+    def to_summary_dict(self):
+        data = {
+            'uuid': self.uuid,
+            'username': self.username,
+            'email': self.email,
+            'display_name': self.display_name,
+            'biography': self.biography,
+            'created_at': self.created_at,
         }
 
         return data

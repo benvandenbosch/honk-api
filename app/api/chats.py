@@ -29,12 +29,15 @@ def create_chat():
         return bad_request('must include name, community_uuid')
 
     community = community_dao.get_by_uuid(data['community_uuid'])
+    community_uuid = None
+    if community:
+        community_uuid = community.uuid
 
     if community and not g.current_user.is_subscribed(community):
         return unauthorized_resource()
 
     # Create the chat
-    chat = Chat(community=community, community_uuid=community.uuid)
+    chat = Chat(community=community, community_uuid=community_uuid)
     chat.from_dict(data)
 
     # Add the creator to the chat
