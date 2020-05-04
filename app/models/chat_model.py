@@ -32,7 +32,6 @@ class Chat(db.Model):
             'uuid': self.uuid,
             'name': self.name,
             'created_at': self.created_at,
-            'community': self.community_uuid if self.community else None,
             'members': [membership.member.to_public_dict() for membership in self.memberships],
             'messages': [message.to_dict() for message in self.messages]
             }

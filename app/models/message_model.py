@@ -41,9 +41,7 @@ class Message(db.Model):
     def to_dict(self):
         data = {
             'uuid': self.uuid,
-            'chat': self.chat.name,
-            'author': self.author.username,
-            'author_uuid': self.author_uuid,
+            'author': self.author.to_public_dict(),
             'created_at': self.created_at,
             'content': self.content,
             'deliveries': [delivery.to_dict() for delivery in self.deliveries],

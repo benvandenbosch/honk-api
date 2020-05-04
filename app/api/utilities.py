@@ -17,10 +17,7 @@ Load all data available to client user
 def get_all_data():
 
     communities = community_dao.list_by_user(g.current_user)
-    data = {
-        'communities': [community.to_dict() for community in communities],
-        'user': g.current_user.to_summary_dict()
-    }
+    data = [community.to_dict() for community in communities]
 
     response = jsonify(data)
     response.status_code = 200

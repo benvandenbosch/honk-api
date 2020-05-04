@@ -33,7 +33,8 @@ class MessageDelivery(db.Model):
     def to_dict(self):
         data = {
             'is_delivered': self.is_delivered,
-            'uuid': self.uuid
+            'uuid': self.uuid,
+            'recipient': self.recipient.to_public_dict()
         }
 
         return data

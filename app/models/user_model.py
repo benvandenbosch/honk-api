@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
 
     # Id & UUID
     id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
-    uuid = db.Column(db.String(32), index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
 
     # User profile
     username = db.Column(db.String(64), index=True, unique=True)
@@ -67,6 +67,9 @@ class User(UserMixin, db.Model):
 
     def is_member(self, chat):
         return self.memberships.filter_by(chat_uuid=chat.uuid).count() > 0
+
+    def is_recipient(self, message):
+        return self.message_deliveries.filter_by(message_uuid=message.uuid).count() > 0
 
     def join_chat(self, chat):
         if not self.is_member(chat):

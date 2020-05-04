@@ -29,3 +29,19 @@ Get reaction by reaction uuid
 """
 def get_reaction_by_uuid(reaction_uuid):
     return Reaction.query.filter_by(uuid=reaction_uuid).first()
+
+"""
+Get all unread messages for a user
+"""
+def get_unread(user):
+    deliveries = MessageDelivery.query.filter_by(recipient=user).filter_by(is_delivered=False).all()
+    messages = [delivery.message for delivery in deliveries]
+    return messages
+
+"""
+Get all messages sent to a user
+"""
+def get_messages(user):
+    deliveries = MessageDelivery.query.filter_by(recipient=user).all()
+    messages = [delivery.message for delivery in deliveries]
+    return messages
