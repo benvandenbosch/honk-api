@@ -46,7 +46,7 @@ Subscribe a user to a community given a user and community object
 def create_subscription(user, community, priveleges=0):
     subscription = Subscription(
         priveleges = priveleges,
-        is_active = True,
+        is_active = 1,
         subscriber = user,
         community = community,
         created_at = datetime.utcnow(),
