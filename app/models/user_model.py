@@ -126,7 +126,7 @@ class User(UserMixin, db.Model):
             'username': self.username,
             'display_name': self.display_name,
             'biography': self.biography,
-            'created_at': self.created_at
+            'created_at': str(self.created_at)
         }
         return data
 

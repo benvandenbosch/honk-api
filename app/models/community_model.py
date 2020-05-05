@@ -26,7 +26,7 @@ class Community(db.Model):
             'uuid': self.uuid,
             'name': self.name,
             'description': self.description,
-            'created_at': self.created_at,
+            'created_at': str(self.created_at),
             'subscribers': [subscription.subscriber.to_public_dict() for subscription in self.subscriptions],
             # 'admins': admins,
             'chats': [chat.to_dict() for chat in self.chats]

@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 from app.models.user_model import User
 from app.models.membership_model import Membership
 from app.daos import user_dao
+import os
+from app.services import notification_service
 
 """
 Create memberships in a chat given a list of usernames
 """
-def add_by_username(usernames, chat):
+def add_by_username(inviter, usernames, chat):
 
     # Retrieve the user objects for all usernames
     users = user_dao.get_users_by_username(usernames)
@@ -24,13 +26,16 @@ def add_by_username(usernames, chat):
         if not user.is_member(chat=chat):
             create_membership(user, chat)
 
+        if os.environ.get('ENV_NAME') == 'PROD':
+            notification_service.new_chat_notification(user, inviter, chat)
+
     return
 
 
 """
 Create memberships in a chat given a list of user uuids
 """
-def add_by_uuid(uuids, chat):
+def add_by_uuid(inviter, uuids, chat):
 
     # Retrieve the user objects for all usernames
     users = user_dao.list_by_uuid(uuids)
@@ -47,6 +52,8 @@ def add_by_uuid(uuids, chat):
         if not user.is_member(chat=chat):
             create_membership(user, chat)
 
+        if os.environ.get('ENV_NAME') == 'PROD':
+            notification_service.new_chat_notification(user, inviter, chat)
     return
 
 
