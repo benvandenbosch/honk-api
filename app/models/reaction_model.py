@@ -53,12 +53,17 @@ class Reaction(db.Model):
             )
             self.deliveries.append(delivery)
 
-    def to_dict(self):
+
+    def to_dict(self, terminating=False):
         data = {
             'uuid': self.uuid,
-            'reactor': self.reactor.to_public_dict(),
-            'reaction_type': self.reaction_type,
-            'deliveries': [delivery.to_dict() for delivery in self.deliveries]
+            'reaction_type': self.reaction_type
         }
+
+        if not terminating:
+            data.update({
+                'reactor': self.reactor.to_dict(terminating=True),
+                'deliveries': [delivery.to_dict() for delivery in self.deliveries]
+            })
 
         return data

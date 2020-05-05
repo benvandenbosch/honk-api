@@ -27,13 +27,18 @@ class Chat(db.Model):
         self.uuid = uuid.uuid4().hex
 
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         data = {
             'uuid': self.uuid,
             'name': self.name,
-            'created_at': str(self.created_at),
-            'members': [membership.member.to_public_dict() for membership in self.memberships],
-            'messages': [message.to_dict() for message in self.messages]
+            'created_at': str(self.created_at)
+
             }
+
+        if not terminating:
+            data.update({
+                'members': [membership.member.to_dict() for membership in self.memberships],
+                'messages': [message.to_dict() for message in self.messages]
+            })
 
         return data

@@ -17,20 +17,25 @@ class Community(db.Model):
     chats = db.relationship("Chat", backref="community", lazy="dynamic")
     subscriptions = db.relationship("Subscription", back_populates="community")
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         admins = []
         for subscription in self.subscriptions:
             if subscription.priveleges == 1:
-                admins.append(subscription.subscriber.to_public_dict())
+                admins.append(subscription.subscriber.to_dict())
+
         data = {
             'uuid': self.uuid,
             'name': self.name,
             'description': self.description,
-            'created_at': str(self.created_at),
-            'subscribers': [subscription.subscriber.to_public_dict() for subscription in self.subscriptions],
-            # 'admins': admins,
-            'chats': [chat.to_dict() for chat in self.chats]
+            'created_at': str(self.created_at)
         }
+
+        if not terminating:
+            data.update({
+                'subscribers': [subscription.subscriber.to_dict() for subscription in self.subscriptions],
+                # 'admins': admins,
+                'chats': [chat.to_dict() for chat in self.chats]
+            })
 
         return data
 

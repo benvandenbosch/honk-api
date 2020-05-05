@@ -26,10 +26,10 @@ def get_user(user_uuid):
 
     # If requested own info, return full user info, else guest user info
     if requested_user == g.current_user:
-        response = jsonify(requested_user.to_public_dict())
+        response = jsonify(requested_user.to_dict())
 
     else:
-        response = jsonify(requested_user.to_public_dict())
+        response = jsonify(requested_user.to_dict())
 
     # Send the response
     response.status_code = 200

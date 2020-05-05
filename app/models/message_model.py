@@ -38,14 +38,20 @@ class Message(db.Model):
         self.author = g.current_user
 
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         data = {
             'uuid': self.uuid,
-            'author': self.author.to_public_dict(),
+            'author': self.author.to_dict(),
             'created_at': str(self.created_at),
             'content': self.content,
-            'deliveries': [delivery.to_dict() for delivery in self.deliveries],
-            'reactions': [reaction.to_dict() for reaction in self.reactions]
+
         }
+
+        # If relationships should be returned, Do The Right Thing
+        if not terminating:
+            data.update({
+                'deliveries': [delivery.to_dict() for delivery in self.deliveries],
+                'reactions': [reaction.to_dict() for reaction in self.reactions]
+            })
 
         return data
