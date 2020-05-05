@@ -12,6 +12,7 @@ class Community(db.Model):
     name = db.Column(db.String(100), index=True, unique=True)
     description = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     chats = db.relationship("Chat", backref="community", lazy="dynamic")

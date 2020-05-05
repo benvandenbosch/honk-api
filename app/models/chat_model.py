@@ -16,6 +16,7 @@ class Chat(db.Model):
     # Chat profile
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     messages = db.relationship('Message', backref='chat', lazy='dynamic')
@@ -24,6 +25,7 @@ class Chat(db.Model):
     def from_dict(self, data):
         self.name = data['name']
         self.created_at = datetime.utcnow()
+        self.last_updated = datetime.utcnow()
         self.uuid = uuid.uuid4().hex
 
 
