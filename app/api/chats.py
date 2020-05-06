@@ -1,12 +1,12 @@
 from app.api import bp
 from flask import jsonify, request, url_for, g
-from app.api.errors import bad_request, unauthorized_resource
+from app.api.errors import bad_request, unauthorized_resource, duplicate_resource_error
 from app.models.user_model import User
 from app.models.chat_model import Chat
 from app.models.community_model import Community
 from app import db
 from app.daos import chat_dao, user_dao, community_dao
-from app.services import chat_service
+from app.services import chat_service, community_service
 from app.api.auth import token_auth
 from datetime import datetime
 import uuid
@@ -57,14 +57,14 @@ def create_chat():
 
 
 """
-ADD A USER TO AN EXISTING CHAT
+UPDATE AN EXISTING CHAT
 
-PAYLOAD OPTIONAL: invite_usernames (list), invite_uuids (list)
+PAYLOAD OPTIONAL: name, invite_usernames (list), invite_uuids (list)
 
 RETURN
 - Chat object in JSON form
 """
-@bp.route('/chats/invite/<chat_uuid>', methods=['PUT'])
+@bp.route('/chats/<chat_uuid>', methods=['PUT'])
 @token_auth.login_required
 def add_user(chat_uuid):
     data = request.get_json() or {}
@@ -75,13 +75,21 @@ def add_user(chat_uuid):
         resource_not_found()
     if not g.current_user.is_member(chat):
         return unauthorized_resource('user must be member of chat with given chat uuid number')
+    if data['name'] and community_dao.is_chat_name_taken(chat=chat, name=data['name']):
+        return duplicate_resource_error('chat name already used in community')
 
+    # Record updates
+    chat.from_dict(data)
+    db.session.commit()
 
-     # Add any requested users to the chat
+    # Add any requested users to the chat
     if 'invite_usernames' in data:
         chat_service.add_by_username(g.current_user, data['invite_usernames'], chat)
     if 'invite_uuids' in data:
         chat_service.add_by_uuid(g.current_user, data['invite_uuids'], chat)
+
+    # Send update background notifications
+    chat_service.send_updates(chat)
 
     response = jsonify(chat.to_dict())
     response.status_code = 201

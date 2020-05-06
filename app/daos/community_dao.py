@@ -1,5 +1,6 @@
 from flask import jsonify
 from app.models.community_model import Community
+from app.models.chat_model import Chat
 from app import db
 
 """
@@ -40,3 +41,10 @@ Return a bool representing whether a community name is already taken
 """
 def is_name_taken(name):
     return Community.query.filter_by(name=name).count() > 0
+
+
+"""
+Return a bool representing whether a chat name is already taken within a community
+"""
+def is_chat_name_taken(chat, name):
+    return Chat.query.filter_by(community=chat.community).filter_by(name=name).count() > 0

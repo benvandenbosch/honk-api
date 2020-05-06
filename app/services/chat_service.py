@@ -2,9 +2,27 @@ from app import db
 from datetime import datetime, timedelta
 from app.models.user_model import User
 from app.models.membership_model import Membership
+from app.models.chat_model import Chat
+from app.services import notification_service
 from app.daos import user_dao
 import os
 from app.services import notification_service
+from gobiko.apns.exceptions import BadDeviceToken
+
+
+"""
+Deliver chat updates to subscribers
+"""
+def send_updates(chat):
+
+    if os.environ.get('ENV_NAME') == 'PROD':
+        for membership in chat.memberships:
+            try:
+                notification_service.chat_update_notification(membership.member, chat)
+            except (BadDeviceToken):
+                print('Bad APNs token for ' + membership.member.username)
+                pass
+
 
 """
 Create memberships in a chat given a list of usernames

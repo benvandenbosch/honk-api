@@ -7,6 +7,18 @@ from app.models.community_model import Community
 from app.models.membership_model import Membership
 import json
 
+"""
+Notify the client in the background that a chat object has been updated
+Category: update_chat
+"""
+def chat_update_notification(user, chat):
+
+    extra = {
+        'chat_uuid': chat.uuid
+    }
+
+    deliver_notification(user, extra=extra, category='update_chat')
+
 
 """
 Notify the client in the background that a community has been updated
