@@ -55,9 +55,9 @@ class Reaction(db.Model):
 
     def to_dict(self):
         data = {
-            'uuid': self.uuid,
+            'uuid': str(self.uuid),
             'reactor': self.reactor.to_public_dict(),
-            'reaction_type': self.reaction_type,
+            'reaction_type': str(self.reaction_type),
             'deliveries': [delivery.to_dict() for delivery in self.deliveries]
         }
 

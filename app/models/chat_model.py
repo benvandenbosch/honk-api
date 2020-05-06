@@ -29,9 +29,9 @@ class Chat(db.Model):
 
     def to_dict(self):
         data = {
-            'uuid': self.uuid,
-            'name': self.name,
-            'created_at': self.created_at,
+            'uuid': str(self.uuid),
+            'name': str(self.name),
+            'created_at': str(self.created_at),
             'members': [membership.member.to_public_dict() for membership in self.memberships],
             'messages': [message.to_dict() for message in self.messages]
             }

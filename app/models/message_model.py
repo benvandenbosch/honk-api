@@ -40,10 +40,10 @@ class Message(db.Model):
 
     def to_dict(self):
         data = {
-            'uuid': self.uuid,
+            'uuid': str(self.uuid),
             'author': self.author.to_public_dict(),
-            'created_at': self.created_at,
-            'content': self.content,
+            'created_at': str(self.created_at),
+            'content': str(self.content),
             'deliveries': [delivery.to_dict() for delivery in self.deliveries],
             'reactions': [reaction.to_dict() for reaction in self.reactions]
         }
