@@ -5,6 +5,21 @@ from app.models.subscription_model import Subscription
 from app.daos import user_dao
 from datetime import datetime, timedelta
 from app.services import notification_service
+import os
+from gobiko.apns.exceptions import BadDeviceToken
+
+"""
+Deliver community updates to subscribers
+"""
+def send_updates(community):
+
+    if os.environ.get('ENV_NAME') == 'PROD':
+        for subscription in community.subscriptions:
+            try:
+                notification_service.community_update_notification(subscription.subscriber, community)
+            except (BadDeviceToken):
+                print('Bad APNs token for ' + subscription.subscriber.username)
+                pass
 
 """
 Create subscriptions to a community for each username in a given list of

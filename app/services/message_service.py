@@ -24,6 +24,7 @@ def create_deliveries(sender, message, chat):
             message = message,
             is_delivered = is_delivered,
             recipient_uuid = member.uuid,
-            message_uuid = message.uuid
+            message_uuid = message.uuid,
+            uuid = uuid.uuid4().hex
         )
         message.deliveries.append(delivery)

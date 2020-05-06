@@ -46,9 +46,9 @@ Update a community object
 
 PAYLOAD OPTIONAL: name, description, invite_usernames (list), invite_uuids (list)
 """
-@bp.route('/communities/invite/<community_uuid>', methods=['PUT'])
+@bp.route('/communities/<community_uuid>', methods=['PUT'])
 @token_auth.login_required
-def invite_subscriber(community_uuid):
+def update_community(community_uuid):
     data = request.get_json() or {}
 
     community = community_dao.get_by_uuid(community_uuid)
@@ -57,13 +57,21 @@ def invite_subscriber(community_uuid):
     if not community:
         resource_not_found()
     if not g.current_user.is_subscribed(community):
-        unauthorized_resource()
+        unauthorized_resource('Cannot edit a community you are not subscribed to')
+    if data['name'] and community_dao.is_name_taken(data['name']):
+        duplicate_resource_error('Community with this name already exists')
+
+    # Update the community object with any new attributes
+    community.from_dict(data)
+    db.session.commit()
 
     # Create subscriptions for attached invite_usernames and invite_uuids
     if 'invite_usernames' in data:
         community_service.add_by_username(g.current_user, data['invite_usernames'], community)
     if 'invite_uuids' in data:
         community_service.add_by_uuid(g.current_user, data['invite_uuids'], community)
+
+    community_service.send_updates(community)
 
     response = jsonify(community.to_dict())
     response.status_code = 201

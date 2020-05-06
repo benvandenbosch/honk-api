@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
 
     # Id & UUID
     id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
-    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
     # User profile
     username = db.Column(db.String(64), index=True, unique=True)
@@ -117,3 +117,5 @@ class User(UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+        if not self.uuid:
+            self.uuid = uuid.uuid4().hex

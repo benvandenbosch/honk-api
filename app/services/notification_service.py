@@ -9,6 +9,19 @@ import json
 
 
 """
+Notify the client in the background that a community has been updated
+Category: update_community
+"""
+def community_update_notification(user, community):
+
+    extra = {
+        'community_uuid': community.uuid
+    }
+
+    deliver_notification(user, extra=extra, category='update_community')
+
+
+"""
 Notify users when they have been added to a community
 """
 def new_community_notification(user, inviter, community):

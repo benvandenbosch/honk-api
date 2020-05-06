@@ -13,7 +13,7 @@ class Reaction(db.Model):
 
     # ID and UUID within Reaction table
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
     # Foreign keys and foreign uuids with Message & User tables
     reactor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -37,6 +37,9 @@ class Reaction(db.Model):
         self.message = message
         self.reactor_uuid = g.current_user.uuid
         self.message_uuid = message.uuid
+        if not self.uuid:
+            self.uuid = uuid.uuid4().hex
+
 
         # Create a reaction delivery object for each recipient
         for membership in self.message.chat.memberships:
@@ -47,7 +50,8 @@ class Reaction(db.Model):
                 reaction = self,
                 is_delivered = is_delivered,
                 recipient_uuid = member.uuid,
-                reaction_uuid = self.uuid
+                reaction_uuid = self.uuid,
+                uuid = uuid.uuid4().hex
             )
             self.deliveries.append(delivery)
 

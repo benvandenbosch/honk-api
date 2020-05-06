@@ -11,7 +11,7 @@ class MessageDelivery(db.Model):
 
     # ID & UUID
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), unique=True, index=True, default=uuid.uuid4().hex)
+    uuid = db.Column(db.String(32), unique=True, index=True)
 
     # Foreign keys with User and Message tables
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))

@@ -18,7 +18,7 @@ class Membership(db.Model):
     chat_uuid = db.Column(db.String(32))
 
     # Track validity timeframes of this Membership
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     deactivated_at = db.Column(db.DateTime)
     is_active = db.Column(db.Boolean, default=True)
 

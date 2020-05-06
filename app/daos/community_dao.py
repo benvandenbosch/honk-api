@@ -34,3 +34,9 @@ Get all communities a user is subscribed to
 def list_by_user(user):
     communities = [subscription.community for subscription in user.subscriptions]
     return communities
+
+"""
+Return a bool representing whether a community name is already taken
+"""
+def is_name_taken(name):
+    return Community.query.filter_by(name=name).count() > 0

@@ -7,7 +7,7 @@ class Chat(db.Model):
 
     # ID & UUID
     id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
-    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
+    uuid = db.Column(db.String(32), index=True, unique=True)
 
     # Foreign key for parent community and foreign uuid
     community_id = db.Column(db.Integer, db.ForeignKey('community.id'))
@@ -26,6 +26,9 @@ class Chat(db.Model):
         self.name = data['name']
         self.created_at = datetime.utcnow()
         self.last_updated = datetime.utcnow()
+        if not self.uuid:
+            self.uuid = uuid.uuid4().hex
+
 
 
     def to_dict(self, terminating=False):
