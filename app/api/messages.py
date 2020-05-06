@@ -22,7 +22,10 @@ PAYLOAD REQUIRED: chat_uuid, content
 @bp.route('/messages', methods=['POST'])
 @token_auth.login_required
 def send_message():
+
     data = request.get_json() or {}
+
+    print(data)
 
     # Data validation
     if 'chat_uuid' not in data or 'content' not in data:
