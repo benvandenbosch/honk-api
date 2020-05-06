@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime, timedelta
+import uuid
 
 """
 This table describes the relationship between a message and its recipients. It
@@ -10,7 +11,7 @@ class MessageDelivery(db.Model):
 
     # ID & UUID
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), unique=True, index=True)
+    uuid = db.Column(db.String(32), unique=True, index=True, default=uuid.uuid4().hex)
 
     # Foreign keys with User and Message tables
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))

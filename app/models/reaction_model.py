@@ -13,7 +13,7 @@ class Reaction(db.Model):
 
     # ID and UUID within Reaction table
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
 
     # Foreign keys and foreign uuids with Message & User tables
     reactor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -32,7 +32,6 @@ class Reaction(db.Model):
 
     def from_dict(self, data):
         message = Message.query.filter_by(uuid=data['message_uuid']).first()
-        self.uuid = uuid.uuid4().hex
         self.reaction_type = data['reaction_type']
         self.reactor = g.current_user
         self.message = message
@@ -48,8 +47,7 @@ class Reaction(db.Model):
                 reaction = self,
                 is_delivered = is_delivered,
                 recipient_uuid = member.uuid,
-                reaction_uuid = self.uuid,
-                uuid = uuid.uuid4().hex
+                reaction_uuid = self.uuid
             )
             self.deliveries.append(delivery)
 

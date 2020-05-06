@@ -25,10 +25,6 @@ def send_message():
 
     data = request.get_json() or {}
 
-    print(data)
-    print(data['chat_uuid'])
-    print(data['content'])
-
     # Data validation
     if 'chat_uuid' not in data or 'content' not in data:
         print('validation failed')
@@ -41,7 +37,7 @@ def send_message():
     if not g.current_user.is_member(chat):
         return bad_request('Must provide chat uuid for chat user is a member of')
 
-    # Create the message
+    # Create the message and an associated delivery object for each recipient
     message = Message(author_uuid=g.current_user.uuid, chat_uuid=chat.uuid)
     message.from_dict(data)
     message_service.create_deliveries(g.current_user, message, chat)
@@ -65,7 +61,7 @@ URL PARAMETERS: message_uuid
 
 Return: Updated message object
 """
-@bp.route('/messages/<message_uuid>/delivered', methods=['PUT'])
+@bp.route('/messages/<message_uuid>/delivery', methods=['PUT'])
 @token_auth.login_required
 def confirm_delivery(message_uuid):
 

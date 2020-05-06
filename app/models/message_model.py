@@ -9,7 +9,7 @@ class Message(db.Model):
 
     # ID & UUID
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
 
     # Foreign keys and uuids for User & Chat tables
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -31,7 +31,6 @@ class Message(db.Model):
 
 
     def from_dict(self, data):
-        self.uuid = uuid.uuid4().hex
         self.content = data['content']
         self.created_at = datetime.utcnow()
         self.chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])

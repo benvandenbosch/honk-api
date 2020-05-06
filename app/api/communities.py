@@ -42,9 +42,9 @@ def create_community():
     return response
 
 """
-Add other users to an existing community
+Update a community object
 
-PAYLOAD OPTIONAL: invite_usernames (list), invite_uuids (list)
+PAYLOAD OPTIONAL: name, description, invite_usernames (list), invite_uuids (list)
 """
 @bp.route('/communities/invite/<community_uuid>', methods=['PUT'])
 @token_auth.login_required

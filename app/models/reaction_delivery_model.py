@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime, timedelta
+import uuid
 
 """
 This table describes the relationship between a reaction and its recipients. It
@@ -10,7 +11,7 @@ class ReactionDelivery(db.Model):
 
     # ID
     id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
-    uuid = db.Column(db.String(32), unique=True, index=True)
+    uuid = db.Column(db.String(32), unique=True, index=True, default=uuid.uuid4().hex)
 
     # Foreign keys and uuids with User and Reaction tables
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))

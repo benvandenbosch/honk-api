@@ -6,7 +6,7 @@ class Community(db.Model):
 
     # ID & UUID
     id = db.Column(db.Integer, primary_key=True, index=True, unique=True)
-    uuid = db.Column(db.String(32), index=True, unique=True)
+    uuid = db.Column(db.String(32), index=True, unique=True, default=uuid.uuid4().hex)
 
     # Community profile
     name = db.Column(db.String(100), index=True, unique=True)
@@ -43,4 +43,3 @@ class Community(db.Model):
     def from_dict(self, data):
         self.name = data['name']
         self.description = data['description']
-        self.uuid = uuid.uuid4().hex
