@@ -26,9 +26,12 @@ def send_message():
     data = request.get_json() or {}
 
     print(data)
+    print(data['chat_uuid'])
+    print(data['content'])
 
     # Data validation
     if 'chat_uuid' not in data or 'content' not in data:
+        print('validation failed')
         return bad_request('must include chat_uuid and content fields')
 
     chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
