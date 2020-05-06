@@ -90,45 +90,25 @@ class User(UserMixin, db.Model):
             return None
         return user
 
+
     # Represent as a JSON object with child relationships
-    def to_dict(self):
-        data = {
-            'uuid': self.uuid,
-            'username': self.username,
-            'email': self.email,
-            'display_name': self.display_name,
-            'biography': self.biography,
-            'created_at': self.created_at,
-            'communities': [subscription.community.uuid for subscription in self.subscriptions],
-            'chats': [membership.chat.to_dict() for membership in self.memberships],
-            'apns': self.apns
-        }
-
-        return data
-
-    # Represent as a JSON object without child relationships
-    def to_summary_dict(self):
-        data = {
-            'uuid': self.uuid,
-            'username': self.username,
-            'email': self.email,
-            'display_name': self.display_name,
-            'biography': self.biography,
-            'created_at': self.created_at,
-        }
-
-        return data
-
-    # Return a dictionary of info that other users can see
-    def to_public_dict(self):
+    def to_dict(self, is_self=False):
         data = {
             'uuid': self.uuid,
             'username': self.username,
             'display_name': self.display_name,
             'biography': self.biography,
-            'created_at': self.created_at
+            'created_at': str(self.created_at)
         }
+
+        if is_self:
+            data.append({
+                'apns': self.apns,
+                'email': self.email
+            })
+
         return data
+
 
     # Convert from JSON object to Python object
     def from_dict(self, data, new_user=False):

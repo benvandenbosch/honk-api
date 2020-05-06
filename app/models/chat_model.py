@@ -16,6 +16,7 @@ class Chat(db.Model):
     # Chat profile
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     messages = db.relationship('Message', backref='chat', lazy='dynamic')
@@ -24,16 +25,22 @@ class Chat(db.Model):
     def from_dict(self, data):
         self.name = data['name']
         self.created_at = datetime.utcnow()
+        self.last_updated = datetime.utcnow()
         self.uuid = uuid.uuid4().hex
 
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         data = {
             'uuid': self.uuid,
             'name': self.name,
-            'created_at': self.created_at,
-            'members': [membership.member.to_public_dict() for membership in self.memberships],
-            'messages': [message.to_dict() for message in self.messages]
+            'created_at': str(self.created_at)
+
             }
+
+        if not terminating:
+            data.update({
+                'members': [membership.member.to_dict() for membership in self.memberships],
+                'messages': [message.to_dict() for message in self.messages]
+            })
 
         return data

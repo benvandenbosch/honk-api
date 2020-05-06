@@ -4,12 +4,13 @@ from app.models.community_model import Community
 from app.models.subscription_model import Subscription
 from app.daos import user_dao
 from datetime import datetime, timedelta
+from app.services import notification_service
 
 """
 Create subscriptions to a community for each username in a given list of
 usernames
 """
-def add_by_username(usernames, community):
+def add_by_username(inviter, usernames, community):
 
     # Retrive user objects for all usernames
     users = user_dao.get_users_by_username(usernames)
@@ -19,6 +20,7 @@ def add_by_username(usernames, community):
     for user in users:
         if not user.is_subscribed(community=community):
             create_subscription(user, community)
+            notification_service.new_community_notification(user, inviter, community)
 
     return
 
@@ -26,7 +28,7 @@ def add_by_username(usernames, community):
 """
 Create subscriptions to a community for each uuid in a given list of uuids
 """
-def add_by_uuid(uuids, community):
+def add_by_uuid(inviter, uuids, community):
 
     # Retrive user objects for all usernames
     users = user_dao.list_by_uuid(uuids)
@@ -36,7 +38,7 @@ def add_by_uuid(uuids, community):
     for user in users:
        if not user.is_subscribed(community=community):
            create_subscription(user, community)
-
+           notification_service.new_community_notification(user, inviter, community)
     return
 
 

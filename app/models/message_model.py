@@ -19,7 +19,7 @@ class Message(db.Model):
 
     # Message attributes
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    content = db.Column(db.String(140))
+    content = db.Column(db.String(400))
 
     # Relationships
     deliveries = db.relationship('MessageDelivery', back_populates='message', lazy='dynamic')
@@ -38,14 +38,20 @@ class Message(db.Model):
         self.author = g.current_user
 
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         data = {
             'uuid': self.uuid,
-            'author': self.author.to_public_dict(),
-            'created_at': self.created_at,
+            'author': self.author.to_dict(),
+            'created_at': str(self.created_at),
             'content': self.content,
-            'deliveries': [delivery.to_dict() for delivery in self.deliveries],
-            'reactions': [reaction.to_dict() for reaction in self.reactions]
+
         }
+
+        # If relationships should be returned, Do The Right Thing
+        if not terminating:
+            data.update({
+                'deliveries': [delivery.to_dict() for delivery in self.deliveries],
+                'reactions': [reaction.to_dict() for reaction in self.reactions]
+            })
 
         return data

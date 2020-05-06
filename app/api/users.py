@@ -29,7 +29,7 @@ def get_user(user_uuid):
         response = jsonify(requested_user.to_dict())
 
     else:
-        response = jsonify(requested_user.to_public_dict())
+        response = jsonify(requested_user.to_dict())
 
     # Send the response
     response.status_code = 200

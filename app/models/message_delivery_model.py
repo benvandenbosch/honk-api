@@ -30,11 +30,15 @@ class MessageDelivery(db.Model):
     def __repr__(self):
         return('<MessageDelivery {}>'.format(self.content))
 
-    def to_dict(self):
+    def to_dict(self, terminating=False):
         data = {
             'is_delivered': self.is_delivered,
-            'uuid': self.uuid,
-            'recipient': self.recipient.to_public_dict()
+            'uuid': self.uuid
         }
+
+        if not terminating:
+            data.update({
+                'recipient': self.recipient.to_dict()
+            })
 
         return data

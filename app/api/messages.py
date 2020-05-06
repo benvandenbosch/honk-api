@@ -37,7 +37,7 @@ def send_message():
     chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
 
     if not chat:
-        return resource_not_found()
+        return resource_not_found('Must provide a chat uuid')
     if not g.current_user.is_member(chat):
         return bad_request('Must provide chat uuid for chat user is a member of')
 
@@ -49,7 +49,8 @@ def send_message():
 
     # Call the notification service
     if os.environ.get('ENV_NAME') == 'PROD':
-        notification_service.deliver_message_notification(sender=g.current_user,chat=chat)
+        notification_service.new_message_notification(sender=g.current_user,
+        message = message, chat=chat)
 
     # Formulate and send the response
     response = jsonify(message.to_dict())

@@ -45,9 +45,9 @@ def create_chat():
 
     # Add any other requested users to the chat
     if 'invite_usernames' in data:
-        chat_service.add_by_username(data['invite_usernames'], chat)
+        chat_service.add_by_username(g.current_user, data['invite_usernames'], chat)
     if 'invite_uuids' in data:
-        chat_service.add_by_uuid(data['invite_uuids'], chat)
+        chat_service.add_by_uuid(g.current_user, data['invite_uuids'], chat)
 
     # Create and send the API response
     response = jsonify(chat.to_dict())
@@ -79,9 +79,9 @@ def add_user(chat_uuid):
 
      # Add any requested users to the chat
     if 'invite_usernames' in data:
-        chat_service.add_by_username(data['invite_usernames'], chat)
+        chat_service.add_by_username(g.current_user, data['invite_usernames'], chat)
     if 'invite_uuids' in data:
-        chat_service.add_by_uuid(data['invite_uuids'], chat)
+        chat_service.add_by_uuid(g.current_user, data['invite_uuids'], chat)
 
     response = jsonify(chat.to_dict())
     response.status_code = 201
