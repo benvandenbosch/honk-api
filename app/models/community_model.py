@@ -23,10 +23,10 @@ class Community(db.Model):
             if subscription.priveleges == 1:
                 admins.append(subscription.subscriber.to_public_dict())
         data = {
-            'uuid': str(self.uuid),
-            'name': str(self.name),
-            'description': str(self.description),
-            'created_at': str(self.created_at),
+            'uuid': self.uuid,
+            'name': self.name,
+            'description': self.description,
+            'created_at': self.created_at,
             'subscribers': [subscription.subscriber.to_public_dict() for subscription in self.subscriptions],
             # 'admins': admins,
             'chats': [chat.to_dict() for chat in self.chats]

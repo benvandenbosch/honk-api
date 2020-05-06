@@ -122,11 +122,11 @@ class User(UserMixin, db.Model):
     # Return a dictionary of info that other users can see
     def to_public_dict(self):
         data = {
-            'uuid': str(self.uuid),
-            'username': str(self.username),
-            'display_name': str(self.display_name),
-            'biography': str(self.biography),
-            'created_at': str(self.created_at)
+            'uuid': self.uuid,
+            'username': self.username,
+            'display_name': self.display_name,
+            'biography': self.biography,
+            'created_at': self.created_at
         }
         return data
 
