@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 0fe168adc39d
+Revision ID: c1d9386713a2
 Revises: 
-Create Date: 2020-05-04 18:17:08.247869
+Create Date: 2020-05-06 00:35:12.852389
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0fe168adc39d'
+revision = 'c1d9386713a2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_community_id'), 'community', ['id'], unique=True)
@@ -55,6 +56,7 @@ def upgrade():
     sa.Column('community_uuid', sa.String(length=32), nullable=True),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['community_id'], ['community.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -99,7 +101,7 @@ def upgrade():
     sa.Column('author_uuid', sa.String(length=32), nullable=True),
     sa.Column('chat_uuid', sa.String(length=32), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('content', sa.String(length=140), nullable=True),
+    sa.Column('content', sa.String(length=400), nullable=True),
     sa.ForeignKeyConstraint(['author_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['chat_id'], ['chat.id'], ),
     sa.PrimaryKeyConstraint('id')

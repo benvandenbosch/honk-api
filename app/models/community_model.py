@@ -27,7 +27,7 @@ class Community(db.Model):
         data = {
             'uuid': self.uuid,
             'name': self.name,
-            'description': self.description,
+            'about': self.description,
             'created_at': str(self.created_at)
         }
 

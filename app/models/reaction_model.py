@@ -62,7 +62,7 @@ class Reaction(db.Model):
 
         if not terminating:
             data.update({
-                'reactor': self.reactor.to_dict(terminating=True),
+                'reactor': self.reactor.to_dict(),
                 'deliveries': [delivery.to_dict() for delivery in self.deliveries]
             })
 

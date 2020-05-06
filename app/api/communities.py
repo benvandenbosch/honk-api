@@ -32,9 +32,9 @@ def create_community():
 
     # Create subscriptions for attached invite_usernames and invite_uuids
     if 'invite_usernames' in data:
-        community_service.add_by_username(data['invite_usernames'], community)
+        community_service.add_by_username(g.current_user, data['invite_usernames'], community)
     if 'invite_uuids' in data:
-        community_service.add_by_uuid(data['invite_uuids'], community)
+        community_service.add_by_uuid(g.current_user, data['invite_uuids'], community)
 
     response = jsonify(community.to_dict())
     response.status_code = 201
@@ -61,9 +61,9 @@ def invite_subscriber(community_uuid):
 
     # Create subscriptions for attached invite_usernames and invite_uuids
     if 'invite_usernames' in data:
-        community_service.add_by_username(data['invite_usernames'], community)
+        community_service.add_by_username(g.current_user, data['invite_usernames'], community)
     if 'invite_uuids' in data:
-        community_service.add_by_uuid(data['invite_uuids'], community)
+        community_service.add_by_uuid(g.current_user, data['invite_uuids'], community)
 
     response = jsonify(community.to_dict())
     response.status_code = 201

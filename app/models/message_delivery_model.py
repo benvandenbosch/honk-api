@@ -38,7 +38,7 @@ class MessageDelivery(db.Model):
 
         if not terminating:
             data.update({
-                'recipient': self.recipient.to_dict(terminating=True)
+                'recipient': self.recipient.to_dict()
             })
 
         return data
