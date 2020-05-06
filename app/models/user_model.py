@@ -76,7 +76,7 @@ class User(UserMixin, db.Model):
             self.chats.append(chat)
 
     def is_subscribed(self, community):
-        return self.subscriptions.filter_by(community_uuid=community.uuid, is_active=1).count() > 0
+        return self.subscriptions.filter_by(community_uuid=community.uuid, is_active=True).count() > 0
 
     def update(self, data):
         for field in ['apns', 'display_name', 'biography']:
