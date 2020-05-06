@@ -10,7 +10,7 @@ from app.daos import chat_dao, user_dao, message_dao
 from app.api.auth import token_auth
 from datetime import datetime
 from sqlalchemy import desc
-from app.services import notification_service
+from app.services import notification_service, message_service
 import os, uuid
 
 """
@@ -30,7 +30,7 @@ def add_reaction(message_uuid):
     message = message_dao.get_by_uuid(message_uuid)
 
     # Validation
-    if not data['reaction_type'] or data['reaction_type'] not in ['like']:
+    if not 'reaction_type' in data or data['reaction_type'] not in ['like']:
         bad_request('Must provide a valid reaction type')
     if not message:
         resource_not_found()
@@ -44,7 +44,7 @@ def add_reaction(message_uuid):
     reaction.from_dict(data)
     db.session.commit()
 
-    # TODO: Add reaction notifications
+    message_service.send_reaction(sender=g.current_user, message=message, reaction=reaction)
 
     # Formulate and send the response
     response = jsonify(message.to_dict())
@@ -53,15 +53,19 @@ def add_reaction(message_uuid):
     return response
 
 """
-Confirm that a reaction has been delivered
+Update a reaction
 
-URL PARAMETERS: message_uuid
+URL PARAMETERS: reaction_uuid
+
+OPTIONAL PAYLOAD: reaction_type, is_delivered
 
 Return: Updated message object
 """
-@bp.route('/messages/reactions/<reaction_uuid>/delivered', methods=['PUT'])
+@bp.route('/messages/reactions/<reaction_uuid>', methods=['PUT'])
 @token_auth.login_required
-def confirm_reaction_delivery(reaction_uuid):
+def update_reaction(reaction_uuid):
+
+    data = request.get_json() or {}
 
     # Get the message delivery
     delivery = message_dao.get_reaction_delivery(g.current_user.uuid, reaction_uuid)
@@ -73,8 +77,15 @@ def confirm_reaction_delivery(reaction_uuid):
     if not g.current_user.is_member(reaction.message.chat):
         unauthorized_resource()
 
-    # Update message delivery status to delivered
-    delivery.is_delivered = True
+    if 'reaction_type' in data and data['reaction_type'] not in ['like']:
+        bad_request('Invalid reaction type')
+
+    if 'reaction_type' in data:
+        reaction.reaction_type = data['reaction_type']
+
+    if data['is_delivered'] and data['is_delivered'] == 'True':
+        delivery.is_delivered = True
+
     db.session.commit()
 
     response = jsonify(reaction.message.to_dict())

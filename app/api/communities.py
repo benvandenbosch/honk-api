@@ -60,7 +60,7 @@ def update_community(community_uuid):
         resource_not_found()
     if not g.current_user.is_subscribed(community):
         unauthorized_resource('Cannot edit a community you are not subscribed to')
-    if data['name'] and community_dao.is_name_taken(data['name']):
+    if 'name' in data and community_dao.is_name_taken(data['name']):
         duplicate_resource_error('Community with this name already exists')
 
     # Update the community object with any new attributes

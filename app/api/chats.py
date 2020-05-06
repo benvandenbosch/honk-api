@@ -77,7 +77,7 @@ def update_chat(chat_uuid):
         resource_not_found()
     if not g.current_user.is_member(chat):
         return unauthorized_resource('user must be member of chat with given chat uuid number')
-    if data['name'] and community_dao.is_chat_name_taken(chat=chat, name=data['name']):
+    if 'name' in data and community_dao.is_chat_name_taken(chat=chat, name=data['name']):
         return duplicate_resource_error('chat name already used in community')
 
     # Record updates

@@ -79,6 +79,30 @@ def new_chat_notification(user, inviter, chat):
 
 
 """
+Notify a user of a new reaction
+Category: new_reaction
+"""
+def new_reaction_notification(user, reaction, message, sender):
+
+    # Create the alert specifications:
+    alert = {
+        'subtitle': message.chat.name
+    }
+
+    # Change the verbiage depending on the reaction type
+    if reaction.reaction_type == 'like':
+        alert.update({'title': sender.username + 'liked a message'})
+
+    extra = {
+        'message_uuid': message.uuid
+    }
+
+    # Send the notification
+    deliver_notification(user, alert=alert, extra=extra, sound='default',
+        category='new_reaction')
+
+
+"""
 Notify all members of a chat when a new message is sent
 """
 def new_message_notification(sender, message, chat):

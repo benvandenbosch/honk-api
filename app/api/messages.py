@@ -79,7 +79,7 @@ def update_message(message_uuid):
         unauthorized_resource('must be member of chat to read a message')
 
     # Update message delivery status to delivered
-    if data['is_delivered'] and data['is_delivered'] == 'True':
+    if 'is_delivered' in data and data['is_delivered'] == 'True':
         delivery.is_delivered = True
         db.session.commit()
 
