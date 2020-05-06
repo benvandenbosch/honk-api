@@ -59,6 +59,8 @@ def create_chat():
 """
 UPDATE AN EXISTING CHAT
 
+URL PARAMETER: chat_uuid
+
 PAYLOAD OPTIONAL: name, invite_usernames (list), invite_uuids (list)
 
 RETURN
@@ -66,7 +68,7 @@ RETURN
 """
 @bp.route('/chats/<chat_uuid>', methods=['PUT'])
 @token_auth.login_required
-def add_user(chat_uuid):
+def update_chat(chat_uuid):
     data = request.get_json() or {}
     chat = chat_dao.get_chat_by_uuid(chat_uuid)
 

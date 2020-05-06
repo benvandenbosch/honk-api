@@ -44,6 +44,8 @@ def create_community():
 """
 Update a community object
 
+URL PARAMETER: community_uuid
+
 PAYLOAD OPTIONAL: name, description, invite_usernames (list), invite_uuids (list)
 """
 @bp.route('/communities/<community_uuid>', methods=['PUT'])

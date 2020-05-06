@@ -17,7 +17,7 @@ SEND A MESSAGE
 
 PAYLOAD REQUIRED: chat_uuid, content
 
- RETURN: Message object in json form
+RETURN: Message object in json form
 """
 @bp.route('/messages', methods=['POST'])
 @token_auth.login_required
@@ -27,7 +27,6 @@ def send_message():
 
     # Data validation
     if 'chat_uuid' not in data or 'content' not in data:
-        print('validation failed')
         return bad_request('must include chat_uuid and content fields')
 
     chat = chat_dao.get_chat_by_uuid(data['chat_uuid'])
@@ -55,15 +54,19 @@ def send_message():
     return response
 
 """
-Confirm that a message has been delivered
+Update a message
 
 URL PARAMETERS: message_uuid
 
+OPTIONAL PAYLOAD: 'is_delivered' (string bool)
+
 Return: Updated message object
 """
-@bp.route('/messages/<message_uuid>/delivery', methods=['PUT'])
+@bp.route('/messages/<message_uuid>', methods=['PUT'])
 @token_auth.login_required
-def confirm_delivery(message_uuid):
+def update_message(message_uuid):
+
+    data = request.get_json() or {}
 
     # Get the message delivery
     delivery = message_dao.get_message_delivery(g.current_user.uuid, message_uuid)
@@ -73,11 +76,12 @@ def confirm_delivery(message_uuid):
     if not message:
         resource_not_found()
     if not g.current_user.is_member(message.chat):
-        unauthorized_resource()
+        unauthorized_resource('must be member of chat to read a message')
 
     # Update message delivery status to delivered
-    delivery.is_delivered = True
-    db.session.commit()
+    if data['is_delivered'] and data['is_delivered'] == 'True':
+        delivery.is_delivered = True
+        db.session.commit()
 
     response = jsonify(message.to_dict())
     response.status_code = 201
