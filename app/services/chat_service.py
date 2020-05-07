@@ -9,6 +9,22 @@ import os
 from app.services import notification_service
 from gobiko.apns.exceptions import BadDeviceToken
 
+"""
+Create initial automatic chat without new chat notification
+"""
+def make_first_chat(community):
+
+    # Create the chat object and associate it with the community
+    chat = Chat(community=community, community_uuid=community.uuid)
+    chat.from_dict({'name': 'everyone'})
+    db.session.commit()
+
+    # Add all subscribers for the given community into the chat
+    for subscription in community.subscriptions:
+        create_membership(subscription.subscriber, chat)
+
+    db.session.commit()
+
 
 """
 Deliver chat updates to subscribers

@@ -7,7 +7,7 @@ from app.models.subscription_model import Subscription
 from app.daos import community_dao, user_dao, chat_dao
 from app import db
 from app.api.auth import token_auth
-from app.services import community_service
+from app.services import community_service, chat_service
 
 """
 Create a community
@@ -35,6 +35,9 @@ def create_community():
         community_service.add_by_username(g.current_user, data['invite_usernames'], community)
     if 'invite_uuids' in data:
         community_service.add_by_uuid(g.current_user, data['invite_uuids'], community)
+
+    # Create an initial chat with all subscribers
+    chat_service.make_first_chat(community)
 
     response = jsonify(community.to_dict())
     response.status_code = 201
