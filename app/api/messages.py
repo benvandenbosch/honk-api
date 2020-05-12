@@ -118,7 +118,8 @@ def get_unread_messages():
 
     # Get all unread messages for the user
     messages = message_dao.get_unread(g.current_user)
-    response = jsonify([message.to_dict() for message in messages])
+    response = jsonify([{'message': message.to_dict(),
+     'chat_uuid': message.chat.uuid}  for message in messages])
     response.status_code =200
 
     return response
