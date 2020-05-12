@@ -74,7 +74,7 @@ PAYLOAD OPTIONAL: apns, display_name, biography TODO: email, username
 
 RETURN: Updated user object
 """
-@bp.route('/users/', methods=['PUT'])
+@bp.route('/users', methods=['PUT'])
 @token_auth.login_required
 def edit_user():
     """
