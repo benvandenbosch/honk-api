@@ -42,10 +42,8 @@ def send_message():
     message_service.create_deliveries(g.current_user, message, chat)
     db.session.commit()
 
-    # Call the notification service
-    if os.environ.get('ENV_NAME') == 'PROD':
-        notification_service.new_message_notification(sender=g.current_user,
-        message = message, chat=chat)
+    # Send message notification to recipients
+    message_service.send_message(sender=g.current_user, message=message, chat=chat)
 
     # Formulate and send the response
     response = jsonify(message.to_dict())

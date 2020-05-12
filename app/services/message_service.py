@@ -8,20 +8,32 @@ import uuid, os
 from app.services import notification_service
 from gobiko.apns.exceptions import BadDeviceToken
 
+"""
+Send a notification to recipients of a message
+"""
+def send_message(sender, message, chat):
+    
+    for membership in chat.memberships:
+        if membership.member != sender:
+            try:
+                notification_service.new_message_notification(sender=sender,
+                    user=membership.member, message=message, chat=chat)
+            except (BadDeviceToken):
+                print('Bad APNs token for ' + membership.member.username)
+
 
 """
 Send a reaction to recipients of a message
 """
 def send_reaction(sender, message, reaction):
 
-    if os.environ.get('ENV_NAME') == 'PROD':
-        for delivery in reaction.deliveries:
-            if delivery.recipient != sender:
-                try:
-                    notification_service.new_reaction_notification(delivery.recipient, reaction, message, sender)
-                except (BadDeviceToken):
-                     print('Bad APNs token for ' + delivery.recipient.username)
-                     pass
+    for delivery in reaction.deliveries:
+        if delivery.recipient != sender:
+            try:
+                notification_service.new_reaction_notification(delivery.recipient, reaction, message, sender)
+            except (BadDeviceToken):
+                 print('Bad APNs token for ' + delivery.recipient.username)
+                 pass
 
 
 """

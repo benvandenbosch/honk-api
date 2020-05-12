@@ -13,13 +13,12 @@ Deliver community updates to subscribers
 """
 def send_updates(community):
 
-    if os.environ.get('ENV_NAME') == 'PROD':
-        for subscription in community.subscriptions:
-            try:
-                notification_service.community_update_notification(subscription.subscriber, community)
-            except (BadDeviceToken):
-                print('Bad APNs token for ' + subscription.subscriber.username)
-                pass
+    for subscription in community.subscriptions:
+        try:
+            notification_service.community_update_notification(subscription.subscriber, community)
+        except (BadDeviceToken):
+            print('Bad APNs token for ' + subscription.subscriber.username)
+
 
 """
 Create subscriptions to a community for each username in a given list of
@@ -35,7 +34,12 @@ def add_by_username(inviter, usernames, community):
     for user in users:
         if not user.is_subscribed(community=community):
             create_subscription(user, community)
-            notification_service.new_community_notification(user, inviter, community)
+
+            try:
+                notification_service.new_community_notification(user, inviter, community)
+            except (BadDeviceToken):
+                print('Bad APNs token for ') + user.username
+
 
     return
 
@@ -53,7 +57,12 @@ def add_by_uuid(inviter, uuids, community):
     for user in users:
        if not user.is_subscribed(community=community):
            create_subscription(user, community)
-           notification_service.new_community_notification(user, inviter, community)
+
+           try:
+               notification_service.new_community_notification(user, inviter, community)
+           except (BadDeviceToken):
+               print('Bad APNs token for ') + user.username
+
     return
 
 

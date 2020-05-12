@@ -31,13 +31,11 @@ Deliver chat updates to subscribers
 """
 def send_updates(chat):
 
-    if os.environ.get('ENV_NAME') == 'PROD':
-        for membership in chat.memberships:
-            try:
-                notification_service.chat_update_notification(membership.member, chat)
-            except (BadDeviceToken):
-                print('Bad APNs token for ' + membership.member.username)
-                pass
+    for membership in chat.memberships:
+        try:
+            notification_service.chat_update_notification(membership.member, chat)
+        except (BadDeviceToken):
+            print('Bad APNs token for ' + membership.member.username)
 
 
 """
@@ -60,8 +58,10 @@ def add_by_username(inviter, usernames, chat):
         if not user.is_member(chat=chat):
             create_membership(user, chat)
 
-        if os.environ.get('ENV_NAME') == 'PROD':
+        try:
             notification_service.new_chat_notification(user, inviter, chat)
+        except (BadDeviceToken):
+            print('Bad APNs token for ' + user.username)
 
     return
 
@@ -86,8 +86,11 @@ def add_by_uuid(inviter, uuids, chat):
         if not user.is_member(chat=chat):
             create_membership(user, chat)
 
-        if os.environ.get('ENV_NAME') == 'PROD':
+        try:
             notification_service.new_chat_notification(user, inviter, chat)
+        except (BadDeviceToken):
+            print('Bad APNs token for ' + user.username)
+
     return
 
 

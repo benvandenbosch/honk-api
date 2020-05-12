@@ -5,7 +5,7 @@ from app.models.user_model import User
 from app.models.message_model import Message
 from app.models.community_model import Community
 from app.models.membership_model import Membership
-import json
+import os, json
 
 """
 Notify the client in the background that a chat object has been updated
@@ -105,7 +105,7 @@ def new_reaction_notification(user, reaction, message, sender):
 """
 Notify all members of a chat when a new message is sent
 """
-def new_message_notification(sender, message, chat):
+def new_message_notification(sender, user, message, chat):
 
     # Create the alert specifications
     alert = {
@@ -117,14 +117,10 @@ def new_message_notification(sender, message, chat):
     # Create the payload
     extra = {
         'chat_uuid': chat.uuid,
-        'message': message.to_dict()
     }
 
-    # Iterate through the list of members and deliver the message
-    for membership in chat.memberships:
-        if not membership.member == sender:
-            deliver_notification(membership.member, alert=alert, sound='default',
-            category='new_message', extra=extra)
+    deliver_notification(user, alert=alert, sound='default', category='new_message',
+        extra=extra)
 
 
 """
