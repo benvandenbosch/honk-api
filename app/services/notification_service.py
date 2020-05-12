@@ -134,6 +134,9 @@ def deliver_notification(user, alert={}, badge=None, sound=None, category=None,
     content_available=True, action_loc_key=None, loc_key=None, loc_args=[], extra={},
     identifier=None):
 
+    if not os.environ.get('ENV_NAME') == 'PROD':
+        return
+
     apns_client.send_message(
         registration_id = user.apns, # User-specific APNS token
         alert = alert,               # Visible notification parameters
