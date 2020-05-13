@@ -30,7 +30,7 @@ def community_update_notification(user, community):
         'community_uuid': community.uuid
     }
 
-    deliver_notification(user, extra=extra, category='update_community')
+    deliver_notification(user, extra=extra, category='community')
 
 
 """
@@ -46,11 +46,11 @@ def new_community_notification(user, inviter, community):
     }
 
     extra = {
-        'community': community.to_dict()
+        'community_uuid': community.uuid
     }
 
     deliver_notification(user, alert=alert, extra=extra, sound='default',
-        category='new_community')
+        category='community')
 
 
 """
@@ -119,7 +119,7 @@ def new_message_notification(sender, user, message, chat):
         'chat_uuid': chat.uuid,
     }
 
-    deliver_notification(user, alert=alert, sound='default', category='new_message',
+    deliver_notification(user, alert=alert, sound='default', category='message',
         extra=extra)
 
 
