@@ -18,7 +18,7 @@ if os.environ.get('ENV_NAME') == 'PROD':
         bundle_id=os.environ.get('APNS_BUNDLE_ID') or 'test-fake',
         auth_key_id=os.environ.get('APNS_AUTH_KEY_ID') or 'test-fake',
         auth_key=os.environ.get('APNS_KEY') or 'test-fake',
-        use_sandbox=True
+        use_sandbox=False
     )
 
 # Use the Config class from config.py module to create an instance of the app
