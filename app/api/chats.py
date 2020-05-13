@@ -135,3 +135,21 @@ def get_chat(chat_uuid):
     response.status_code = 200
 
     return response
+
+
+"""
+Get an analytics report for a chat by uuid
+"""
+@bp.route('/chats/<chat_uuid>/analytics', methods=['GET'])
+@token_auth.login_required
+def get_chat_analytics(chat_uuid):
+
+    temp_data = {
+        'most_active': 'bvandy',
+        'weekly_msg_count': 300,
+        'daily_activity_delta': 20
+    }
+    response = jsonify(temp_data)
+    response.status_code = 200
+
+    return response
