@@ -17,7 +17,7 @@ def chat_update_notification(user, chat):
         'chat_uuid': chat.uuid
     }
 
-    deliver_notification(user, extra=extra, category='update_chat')
+    deliver_notification(user, extra=extra, category='chat')
 
 
 """
@@ -67,7 +67,7 @@ def new_chat_notification(user, inviter, chat):
     # Create the payload
     extra = {
         'community_uuid': None,
-        'chat': chat.to_dict()
+        'chat_uuid': chat.uuid
     }
 
     if chat.community:
@@ -75,7 +75,7 @@ def new_chat_notification(user, inviter, chat):
         extra.update({'community_uuid': chat.community.uuid})
 
     deliver_notification(user, alert=alert, extra=extra, sound='default',
-        category='new_chat')
+        category='chat')
 
 
 """
