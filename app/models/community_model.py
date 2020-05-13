@@ -1,6 +1,8 @@
 from app import db
 from datetime import datetime, timedelta
 import uuid
+from app.daos import chat_dao
+from flask import g
 
 class Community(db.Model):
 
@@ -24,18 +26,21 @@ class Community(db.Model):
             if subscription.priveleges == 1:
                 admins.append(subscription.subscriber.to_dict())
 
+        # Only return chats a user is allowed to see
+        chats = chat_dao.get_by_user_and_community(user=g.current_user, community=self)
+
         data = {
             'uuid': self.uuid,
             'name': self.name,
             'about': self.description,
             'created_at': str(self.created_at),
             'subscribers': [subscription.subscriber.to_dict() for subscription in self.subscriptions],
-            'chats': [chat.to_dict(terminating=True) for chat in self.chats]
+            'chats': [chat.to_dict(terminating=True) for chat in chats]
         }
 
         if not terminating:
             data.update({
-                'chats': [chat.to_dict() for chat in self.chats]
+                'chats': [chat.to_dict() for chat in chats]
             })
 
         return data

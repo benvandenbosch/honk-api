@@ -22,3 +22,11 @@ Get all of the chats that a user is a member of
 def get_by_user(user):
     chats = Chat.query.join(Membership).filter(Chat.membership.member==user).all()
     return chats
+
+def get_by_user_and_community(user, community):
+    community_chats = community.chats
+    chats = []
+    for chat in community_chats:
+        if user.is_member(chat):
+            chats.append(chat)
+    return chats

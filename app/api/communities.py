@@ -78,7 +78,7 @@ def update_community(community_uuid):
 
     community_service.send_updates(community)
 
-    response = jsonify(community.to_dict())
+    response = jsonify(community.to_dict(terminating=True))
     response.status_code = 201
 
     return response
@@ -129,7 +129,7 @@ def get_community(community_uuid):
     if not g.current_user.is_subscribed(community):
         unauthorized_resource()
 
-    response = jsonify(community.to_dict())
+    response = jsonify(community.to_dict(terminating=True))
     response.status_code = 200
 
     return response

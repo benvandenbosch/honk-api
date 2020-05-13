@@ -7,7 +7,7 @@ from app.services import notification_service
 from app.daos import user_dao
 import os
 from app.services import notification_service
-from gobiko.apns.exceptions import BadDeviceToken
+from gobiko.apns.exceptions import BadDeviceToken, InvalidProviderToken
 
 """
 Create initial automatic chat without new chat notification
@@ -34,7 +34,7 @@ def send_updates(chat):
     for membership in chat.memberships:
         try:
             notification_service.chat_update_notification(membership.member, chat)
-        except (BadDeviceToken):
+        except (BadDeviceToken, InvalidProviderToken):
             print('Bad APNs token for ' + membership.member.username)
 
 
@@ -60,7 +60,7 @@ def add_by_username(inviter, usernames, chat):
 
         try:
             notification_service.new_chat_notification(user, inviter, chat)
-        except (BadDeviceToken):
+        except (BadDeviceToken, InvalidProviderToken):
             print('Bad APNs token for ' + user.username)
 
     return
@@ -88,7 +88,7 @@ def add_by_uuid(inviter, uuids, chat):
 
         try:
             notification_service.new_chat_notification(user, inviter, chat)
-        except (BadDeviceToken):
+        except (BadDeviceToken, InvalidProviderToken):
             print('Bad APNs token for ' + user.username)
 
     return

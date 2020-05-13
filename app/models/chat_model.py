@@ -31,17 +31,17 @@ class Chat(db.Model):
 
 
 
-    def to_dict(self, terminating=False):
+    def to_dict(self, terminating=True):
         data = {
             'uuid': self.uuid,
             'name': self.name,
-            'created_at': str(self.created_at)
+            'created_at': str(self.created_at),
+            'members': [membership.member.to_dict() for membership in self.memberships]
 
             }
 
         if not terminating:
             data.update({
-                'members': [membership.member.to_dict() for membership in self.memberships],
                 'messages': [message.to_dict() for message in self.messages]
             })
 

@@ -6,7 +6,7 @@ from app.daos import user_dao
 from datetime import datetime, timedelta
 from app.services import notification_service
 import os
-from gobiko.apns.exceptions import BadDeviceToken
+from gobiko.apns.exceptions import BadDeviceToken, InvalidProviderToken
 
 """
 Deliver community updates to subscribers
@@ -16,7 +16,7 @@ def send_updates(community):
     for subscription in community.subscriptions:
         try:
             notification_service.community_update_notification(subscription.subscriber, community)
-        except (BadDeviceToken):
+        except (BadDeviceToken, InvalidProviderToken):
             print('Bad APNs token for ' + subscription.subscriber.username)
 
 
@@ -37,8 +37,8 @@ def add_by_username(inviter, usernames, community):
 
             try:
                 notification_service.new_community_notification(user, inviter, community)
-            except (BadDeviceToken):
-                print('Bad APNs token for ') + user.username
+            except (BadDeviceToken, InvalidProviderToken):
+                print('Bad APNs token for ' + user.username)
 
 
     return
@@ -60,7 +60,7 @@ def add_by_uuid(inviter, uuids, community):
 
            try:
                notification_service.new_community_notification(user, inviter, community)
-           except (BadDeviceToken):
+           except (BadDeviceToken, InvalidProviderToken):
                print('Bad APNs token for ') + user.username
 
     return

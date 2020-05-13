@@ -6,19 +6,19 @@ from app.daos import user_dao
 from app.models.message_delivery_model import MessageDelivery
 import uuid, os
 from app.services import notification_service
-from gobiko.apns.exceptions import BadDeviceToken
+from gobiko.apns.exceptions import BadDeviceToken, InvalidProviderToken
 
 """
 Send a notification to recipients of a message
 """
 def send_message(sender, message, chat):
-    
+
     for membership in chat.memberships:
         if membership.member != sender:
             try:
                 notification_service.new_message_notification(sender=sender,
                     user=membership.member, message=message, chat=chat)
-            except (BadDeviceToken):
+            except (BadDeviceToken, InvalidProviderToken):
                 print('Bad APNs token for ' + membership.member.username)
 
 
@@ -31,7 +31,7 @@ def send_reaction(sender, message, reaction):
         if delivery.recipient != sender:
             try:
                 notification_service.new_reaction_notification(delivery.recipient, reaction, message, sender)
-            except (BadDeviceToken):
+            except (BadDeviceToken, InvalidProviderToken):
                  print('Bad APNs token for ' + delivery.recipient.username)
                  pass
 
