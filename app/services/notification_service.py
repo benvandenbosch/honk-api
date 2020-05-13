@@ -91,7 +91,7 @@ def new_reaction_notification(user, reaction, message, sender):
 
     # Change the verbiage depending on the reaction type
     if reaction.reaction_type == 'like':
-        alert.update({'title': sender.username + 'liked a message'})
+        alert.update({'title': sender.username + ' liked a message'})
 
     extra = {
         'message_uuid': message.uuid
@@ -99,7 +99,7 @@ def new_reaction_notification(user, reaction, message, sender):
 
     # Send the notification
     deliver_notification(user, alert=alert, extra=extra, sound='default',
-        category='new_reaction')
+        category='message')
 
 
 """
