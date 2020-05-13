@@ -35,6 +35,15 @@ def send_reaction(sender, message, reaction):
                  print('Bad APNs token for ' + delivery.recipient.username)
                  pass
 
+"""
+Set all message deliveries to false except for the editor
+"""
+def reset_deliveries(editor, message):
+    for delivery in message.deliveries:
+        if delivery.recipient != editor:
+            delivery.is_delivered = False
+    db.session.commit()
+
 
 """
 Create MessageDelivery objects for each recipient of a message

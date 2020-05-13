@@ -32,7 +32,7 @@ def add_reaction(message_uuid):
     # Validation
     if not 'reaction_type' in data or data['reaction_type'] not in ['like']:
         bad_request('Must provide a valid reaction type')
-    if not message:
+    if message is None:
         resource_not_found()
     if not g.current_user.is_member(message.chat):
         unauthorized_resource()
@@ -44,6 +44,7 @@ def add_reaction(message_uuid):
     reaction.from_dict(data)
     db.session.commit()
 
+    message_service.reset_deliveries(editor=g.current_user, message=message)
     message_service.send_reaction(sender=g.current_user, message=message, reaction=reaction)
 
     # Formulate and send the response
@@ -88,6 +89,7 @@ def update_reaction(reaction_uuid):
 
     db.session.commit()
 
+    message_service.reset_deliveries(editor=g.current_user, message=reaction.message)
     response = jsonify(reaction.message.to_dict())
     response.status_code = 201
 
