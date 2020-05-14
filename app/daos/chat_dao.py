@@ -3,6 +3,7 @@ from app.models.chat_model import Chat
 from app.models.membership_model import Membership
 from app.models.user_model import User
 from app import db
+import datetime
 
 """
 Chat Data Access Object

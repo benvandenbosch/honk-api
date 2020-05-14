@@ -5,7 +5,7 @@ from app.models.user_model import User
 from app.models.chat_model import Chat
 from app.models.community_model import Community
 from app import db
-from app.daos import chat_dao, user_dao, community_dao
+from app.daos import chat_dao, user_dao, community_dao, message_dao
 from app.services import chat_service, community_service
 from app.api.auth import token_auth
 from datetime import datetime
@@ -143,13 +143,20 @@ Get an analytics report for a chat by uuid
 @bp.route('/chats/<chat_uuid>/analytics', methods=['GET'])
 @token_auth.login_required
 def get_chat_analytics(chat_uuid):
+    chat = chat_dao.get_chat_by_uuid(chat_uuid)
 
-    temp_data = {
-        'most_active': 'bvandy',
-        'weekly_msg_count': 300,
-        'daily_activity_delta': 20
+    if chat is None:
+        return bad_request('not a valid chat uuid')
+    if not g.current_user.is_member(chat):
+        return unauthorized_resource('user not authorized for chat')
+
+    data = {
+        'most_active': message_dao.get_most_active_username(chat),
+        'weekly_msg_count': message_dao.count_by_chat(chat),
+        'daily_activity_delta': message_dao.generate_activity_delta(chat)
     }
-    response = jsonify(temp_data)
+
+    response = jsonify(data)
     response.status_code = 200
 
     return response
